@@ -1,0 +1,58 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:inventory/core/assets/assets.gen.dart';
+import 'package:inventory/core/widgets/widgets.dart';
+import 'package:inventory/core/constants/constants.dart';
+
+Future<T?> showDialogCustomWidget<T>({
+  required BuildContext context,
+  required String title,
+  required Widget content,
+  bool scrollControlled = true,
+  bool dismissible = true,
+  bool dragAble = true,
+  VoidCallback? onPopBottomSheet,
+}) {
+  return showModalBottomSheet<T>(
+    context: context,
+    isScrollControlled: scrollControlled,
+    isDismissible: dismissible,
+    enableDrag: dragAble,
+    backgroundColor: BaseColor.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(BaseSize.customRadius(BaseSize.radiusMd)),
+      ),
+    ),
+    builder: (context) => Padding(
+      padding: EdgeInsets.only(
+        left: BaseSize.w12,
+        right: BaseSize.w12,
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Gap.h24,
+            ScreenTitleWidget.bottomSheet(
+              title: title,
+              trailIcon: Assets.icons.line.times,
+              trailIconColor: BaseColor.primaryText,
+              onPressedTrailIcon: () {
+                if (onPopBottomSheet != null) {
+                  onPopBottomSheet();
+                }
+                context.pop();
+              },
+            ),
+            Gap.h16,
+            content,
+            Gap.h48,
+          ],
+        ),
+      ),
+    ),
+  );
+}
