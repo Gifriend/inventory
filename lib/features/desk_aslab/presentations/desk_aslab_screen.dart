@@ -85,7 +85,9 @@ class _DeskQrTile extends StatelessWidget {
 
   String _qrUrlForDesk(DeskModel d) {
     final payload = d.qrPayload ?? jsonEncode({'room_id': d.roomId, 'desk_id': d.id});
-    return 'https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=${Uri.encodeComponent(payload)}';
+    // Use a public QR generator endpoint that returns a PNG image.
+    // google chart API may be unreliable or blocked in some environments.
+    return 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${Uri.encodeComponent(payload)}';
   }
 
   @override
@@ -124,7 +126,17 @@ class _DeskQrTile extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(child: Image.network(qrUrl, fit: BoxFit.contain, errorBuilder: (_, _, _) => const Icon(Icons.broken_image))),
+              Expanded(
+                child: Image.network(
+                  qrUrl,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stack) {
+                    debugPrint('QR image load failed for URL: $qrUrl');
+                    debugPrint('Image error: $error');
+                    return const Icon(Icons.broken_image);
+                  },
+                ),
+              ),
               Gap.h8,
               Text(desk.deskNumber, style: BaseTypography.titleSmall.copyWith(color: isAvailable ? BaseColor.white : BaseColor.neutral)),
             ],
