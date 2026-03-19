@@ -86,10 +86,10 @@ class DeskSelectionScreen extends ConsumerWidget {
                     itemCount: desks.length,
                     itemBuilder: (context, index) {
                       final desk = desks[index];
-                      final isAvailable = desk.status == 'available';
-                      final tileColor = isAvailable
+                        final isAvailable = desk.status == 'available';
+                        final tileColor = isAvailable
                           ? BaseColor.primaryinventory
-                          : BaseColor.error;
+                          : BaseColor.grey.shade300;
 
                       return InkWell(
                         onTap: !isAvailable
@@ -107,13 +107,13 @@ class DeskSelectionScreen extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(
                               BaseSize.radiusMd,
                             ),
-                            boxShadow: BaseShadow.shadow,
+                            boxShadow: isAvailable ? BaseShadow.shadow : [],
                           ),
                           child: Center(
                             child: Text(
                               desk.deskNumber,
                               style: BaseTypography.titleMedium.copyWith(
-                                color: BaseColor.white,
+                                color: isAvailable ? BaseColor.white : BaseColor.grey,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),

@@ -17,19 +17,29 @@ class LoanRepository {
   Future<List<LoanModel>> getLoans() async {
     final response = await _dio.get<dynamic>(Endpoint.loans);
     final data = response.data;
-    if (data is! Map<String, dynamic>) {
-      throw const FormatException('Invalid loans response');
+    // Support multiple possible response shapes:
+    // - { "data": [ ... ] }
+    // - [ ... ]
+    // - any other -> return empty list instead of throwing
+    if (data is List) {
+      return data
+          .whereType<Map>()
+          .map((e) => LoanModel.fromJson(Map<String, dynamic>.from(e)))
+          .toList();
     }
 
-    final list = data['data'];
-    if (list is! List) {
+    if (data is Map<String, dynamic>) {
+      final list = data['data'];
+      if (list is List) {
+        return list
+            .whereType<Map>()
+            .map((e) => LoanModel.fromJson(Map<String, dynamic>.from(e)))
+            .toList();
+      }
       return [];
     }
 
-    return list
-        .whereType<Map>()
-        .map((e) => LoanModel.fromJson(Map<String, dynamic>.from(e)))
-        .toList();
+    return [];
   }
 
   Future<void> createLoan({

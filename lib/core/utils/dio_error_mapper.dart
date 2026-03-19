@@ -5,6 +5,11 @@ String mapDioErrorToMessage(Object error) {
     return error;
   }
 
+  if (error is FormatException) {
+    final message = error.message;
+    if (message.trim().isNotEmpty) return message;
+  }
+
   if (error is DioException) {
     if (error.type == DioExceptionType.connectionError ||
         error.type == DioExceptionType.connectionTimeout ||
