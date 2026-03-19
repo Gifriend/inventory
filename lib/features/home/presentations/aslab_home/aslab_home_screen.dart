@@ -94,6 +94,31 @@ class AslabHomeScreen extends ConsumerWidget {
               onTap: () => context.pushNamed(AppRoute.approval),
             ),
           ),
+          Container(
+            margin: EdgeInsets.only(bottom: BaseSize.h8),
+            decoration: BoxDecoration(
+              color: BaseColor.white,
+              borderRadius: BorderRadius.circular(BaseSize.radiusMd),
+              boxShadow: BaseShadow.shadow,
+            ),
+            child: ListTile(
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: BaseSize.w12,
+                vertical: BaseSize.h8,
+              ),
+              leading: CircleAvatar(
+                backgroundColor: BaseColor.primaryinventory,
+                child: const Icon(
+                  Icons.qr_code,
+                  color: BaseColor.cardBackground1,
+                ),
+              ),
+              title: Text('QR Meja', style: BaseTypography.titleMedium),
+              subtitle: Text('Lihat dan unduh QR untuk setiap meja', style: BaseTypography.titleSmall),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.pushNamed(AppRoute.aslabDeskQr),
+            ),
+          ),
         ],
       ),
     );
