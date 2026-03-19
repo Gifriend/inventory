@@ -12,14 +12,14 @@ class BaseColor {
   static const int _greyPrimaryValue = 0xFF9E9E9E;
 
   static const Color primary1 = Color(0xFFF0FBF8);
-  static const Color primaryinventory = Color(0xFF702A25);
-  static const Color primaryinventory2 = Color(0xFFDC3545);
+  static const Color primaryinventory = Color(0xFF355872);
+  static const Color primaryinventory2 = Color(0xFF7AAACE);
   static const Color primary2 = Color(0xFFDEF5EE);
   static const Color primary3 = Color(0xFF000000);
   static const Color primary4 = Color(0xFF28A745);
   static const Color primary5 = Color(0xFF19692C);
 
-  static const Color cardBackground1 = Color(0xFFEBEBEB);
+  static const Color cardBackground1 = Color(0xFFF7F8F0);
   static const Color cardBackground2 = Color(0xFFE9E9E9);
   static const Color primaryText = Color(0xFF000000);
   static const Color secondaryText = Color(0xFF929292);
