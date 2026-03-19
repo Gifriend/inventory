@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:inventory/core/assets/assets.dart';
 import 'package:inventory/core/utils/dio_error_mapper.dart';
+import 'package:inventory/core/widgets/widgets.dart';
 import 'package:inventory/features/loan/presentations/dialogs/approve_assignment_dialog.dart';
 import 'package:inventory/features/loan/presentations/loan_controller.dart';
 import 'package:inventory/core/constants/constants.dart';
@@ -33,42 +35,70 @@ class ApprovalDashboardScreen extends ConsumerWidget {
       );
     });
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Approval Dashboard')),
-      body: loansAsync.when(
+    return ScaffoldWidget(
+      disableSingleChildScrollView: true,
+      appBar: AppBarWidget(
+        title: 'Approval Dashboard',
+        leadIcon: Assets.icons.fill.arrowBack,
+        onPressedLeadIcon: () => Navigator.of(context).pop(),
+      ),
+      child: loansAsync.when(
         data: (loans) {
           final pending = loans
               .where((loan) => loan.status == 'pending')
               .toList();
           if (pending.isEmpty) {
-            return const Center(child: Text('No pending requests'));
+            return Center(
+              child: Text(
+                'Tidak ada permintaan pending',
+                style: BaseTypography.titleMedium,
+              ),
+            );
           }
 
           return ListView.separated(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.symmetric(
+              horizontal: BaseSize.w16,
+              vertical: BaseSize.h16,
+            ),
             itemCount: pending.length,
             separatorBuilder: (_, separatorIndex) => Gap.h12,
             itemBuilder: (context, index) {
               final loan = pending[index];
 
-              return Card(
+              return Container(
+                decoration: BoxDecoration(
+                  color: BaseColor.white,
+                  borderRadius: BorderRadius.circular(BaseSize.radiusMd),
+                  boxShadow: BaseShadow.shadow,
+                ),
                 child: Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: EdgeInsets.all(BaseSize.w12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Request #${loan.id}'),
+                      Text(
+                        'Request #${loan.id}',
+                        style: BaseTypography.titleMedium.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                       Gap.h8,
-                      Text('User: ${loan.user?.name ?? '-'}'),
+                      Text(
+                        'User: ${loan.user?.name ?? '-'}',
+                        style: BaseTypography.titleSmall,
+                      ),
                       Text(
                         'Schedule: ${loan.startTime ?? '-'} - ${loan.endTime ?? '-'}',
+                        style: BaseTypography.titleSmall,
                       ),
                       Gap.h12,
                       Row(
                         children: [
                           Expanded(
-                            child: ElevatedButton(
-                              onPressed: actionState.isLoading
+                            child: ButtonWidget.primary(
+                              text: 'Approve',
+                              onTap: actionState.isLoading
                                   ? null
                                   : () async {
                                       final result =
@@ -94,13 +124,13 @@ class ApprovalDashboardScreen extends ConsumerWidget {
                                             );
                                       }
                                     },
-                              child: const Text('Approve'),
                             ),
                           ),
                           Gap.w12,
                           Expanded(
-                            child: OutlinedButton(
-                              onPressed: actionState.isLoading
+                            child: ButtonWidget.outlined(
+                              text: 'Reject',
+                              onTap: actionState.isLoading
                                   ? null
                                   : () async {
                                       final notesController =
@@ -152,7 +182,6 @@ class ApprovalDashboardScreen extends ConsumerWidget {
                                       }
                                       notesController.dispose();
                                     },
-                              child: const Text('Reject'),
                             ),
                           ),
                         ],

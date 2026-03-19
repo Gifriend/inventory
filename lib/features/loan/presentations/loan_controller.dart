@@ -15,7 +15,7 @@ class LoanActionController extends AsyncNotifier<void> {
   Future<void> build() async {}
 
   Future<void> createLoan({
-    required PlatformFile pdfFile,
+    PlatformFile? pdfFile,
     required DateTime startTime,
     required DateTime endTime,
   }) async {

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:inventory/core/assets/assets.dart';
 import 'package:inventory/core/constants/constants.dart';
 import 'package:inventory/core/routing/app_routing.dart';
+import 'package:inventory/core/widgets/widgets.dart';
 import 'package:inventory/features/login/presentation.dart';
 
 class AslabHomeScreen extends ConsumerWidget {
@@ -11,70 +13,83 @@ class AslabHomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(loginControllerProvider).user;
-    final colorScheme = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Aslab Dashboard'),
-        actions: [
-          IconButton(
-            onPressed: () => ref.read(loginControllerProvider.notifier).logout(),
-            icon: const Icon(Icons.logout),
-          ),
-        ],
+    return ScaffoldWidget(
+      disableSingleChildScrollView: true,
+      appBar: AppBarWidget(
+        title: 'Dashboard Aslab',
+        trailIcon: Assets.svg.logOut,
+        trailIconColor: BaseColor.white,
+        onPressedTrailIcon: () =>
+            ref.read(loginControllerProvider.notifier).logout(),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
+      child: ListView(
+        padding: EdgeInsets.symmetric(
+          horizontal: BaseSize.w16,
+          vertical: BaseSize.h16,
+        ),
         children: [
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: colorScheme.primaryContainer,
-                    child: Icon(
-                      Icons.verified_user_outlined,
-                      color: colorScheme.onPrimaryContainer,
-                    ),
+          Container(
+            padding: EdgeInsets.all(BaseSize.w16),
+            decoration: BoxDecoration(
+              color: BaseColor.white,
+              borderRadius: BorderRadius.circular(BaseSize.radiusMd),
+              boxShadow: BaseShadow.shadow,
+            ),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: BaseColor.primaryinventory,
+                  child: const Icon(
+                    Icons.verified_user_outlined,
+                    color: BaseColor.cardBackground1,
                   ),
-                  Gap.h12,
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Halo, ${user?.name ?? 'Aslab'}',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        Gap.h4,
-                        Text(
-                          'Kelola persetujuan peminjaman dari satu dashboard.',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ],
-                    ),
+                ),
+                Gap.w12,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Halo, ${user?.name ?? 'Aslab'}',
+                        style: BaseTypography.titleLarge,
+                      ),
+                      Gap.h4,
+                      Text(
+                        'Kelola persetujuan peminjaman dari satu dashboard.',
+                        style: BaseTypography.titleSmall,
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
           Gap.h12,
-          Card(
+          Container(
+            margin: EdgeInsets.only(bottom: BaseSize.h8),
+            decoration: BoxDecoration(
+              color: BaseColor.white,
+              borderRadius: BorderRadius.circular(BaseSize.radiusMd),
+              boxShadow: BaseShadow.shadow,
+            ),
             child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 8,
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: BaseSize.w12,
+                vertical: BaseSize.h8,
               ),
               leading: CircleAvatar(
-                backgroundColor: colorScheme.primaryContainer,
-                child: Icon(
+                backgroundColor: BaseColor.primaryinventory,
+                child: const Icon(
                   Icons.approval_outlined,
-                  color: colorScheme.onPrimaryContainer,
+                  color: BaseColor.cardBackground1,
                 ),
               ),
-              title: const Text('Approval Dashboard'),
-              subtitle: const Text('Setujui atau tolak permintaan yang masuk'),
+              title: Text('Approval Dashboard', style: BaseTypography.titleMedium),
+              subtitle: Text(
+                'Setujui atau tolak permintaan yang masuk',
+                style: BaseTypography.titleSmall,
+              ),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.pushNamed(AppRoute.approval),
             ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:inventory/core/assets/assets.dart';
+import 'package:inventory/core/widgets/widgets.dart';
 import 'package:inventory/core/utils/dio_error_mapper.dart';
 import 'package:inventory/features/loan/presentations/loan_controller.dart';
 import 'package:inventory/core/constants/constants.dart';
@@ -12,16 +14,29 @@ class MyLoansScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final loansAsync = ref.watch(loansProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('My Loan Requests')),
-      body: loansAsync.when(
+    return ScaffoldWidget(
+      disableSingleChildScrollView: true,
+      appBar: AppBarWidget(
+        title: 'Riwayat Peminjaman',
+        leadIcon: Assets.icons.fill.arrowBack,
+        onPressedLeadIcon: () => Navigator.of(context).pop(),
+      ),
+      child: loansAsync.when(
         data: (loans) {
           if (loans.isEmpty) {
-            return const Center(child: Text('No loan requests yet'));
+            return Center(
+              child: Text(
+                'Belum ada riwayat peminjaman',
+                style: BaseTypography.titleMedium,
+              ),
+            );
           }
 
           return ListView.separated(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.symmetric(
+              horizontal: BaseSize.w16,
+              vertical: BaseSize.h16,
+            ),
             itemCount: loans.length,
             separatorBuilder: (_, _) => Gap.h12,
             itemBuilder: (context, index) {
@@ -34,9 +49,14 @@ class MyLoansScreen extends ConsumerWidget {
                 _ => BaseColor.grey,
               };
 
-              return Card(
+              return Container(
+                decoration: BoxDecoration(
+                  color: BaseColor.white,
+                  borderRadius: BorderRadius.circular(BaseSize.radiusMd),
+                  boxShadow: BaseShadow.shadow,
+                ),
                 child: Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: EdgeInsets.all(BaseSize.w12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -45,22 +65,23 @@ class MyLoansScreen extends ConsumerWidget {
                         children: [
                           Text(
                             'Request #${loan.id}',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            style: BaseTypography.titleMedium.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: BaseSize.w8,
+                              vertical: BaseSize.h4,
                             ),
                             decoration: BoxDecoration(
                               color: statusColor,
-                              borderRadius: BorderRadius.circular(4),
+                              borderRadius: BorderRadius.circular(BaseSize.radiusSm),
                             ),
                             child: Text(
                               loan.status.toUpperCase(),
-                              style: const TextStyle(
+                              style: BaseTypography.bodyMedium.copyWith(
                                 color: BaseColor.white,
-                                fontSize: 12,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -73,33 +94,39 @@ class MyLoansScreen extends ConsumerWidget {
                         Text('Desk: ${loan.desk!.deskNumber}'),
                       Text(
                         'Requested: ${loan.startTime ?? '-'} to ${loan.endTime ?? '-'}',
+                        style: BaseTypography.titleSmall,
                       ),
                       if (loan.checkInTime != null)
-                        Text('Checked In: ${loan.checkInTime}'),
+                        Text(
+                          'Checked In: ${loan.checkInTime}',
+                          style: BaseTypography.titleSmall,
+                        ),
                       if (loan.checkOutTime != null)
-                        Text('Checked Out: ${loan.checkOutTime}'),
+                        Text(
+                          'Checked Out: ${loan.checkOutTime}',
+                          style: BaseTypography.titleSmall,
+                        ),
                       if (loan.adminNotes != null &&
                           loan.adminNotes!.isNotEmpty) ...[
                         Gap.h4,
                         Container(
-                          padding: const EdgeInsets.all(8),
+                          padding: EdgeInsets.all(BaseSize.w8),
                           decoration: BoxDecoration(
                             color: BaseColor.grey[200],
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.circular(BaseSize.radiusSm),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              Text(
                                 'Admin Notes:',
-                                style: TextStyle(
+                                style: BaseTypography.bodyMedium.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 12,
                                 ),
                               ),
                               Text(
                                 loan.adminNotes!,
-                                style: const TextStyle(fontSize: 12),
+                                style: BaseTypography.bodyMedium,
                               ),
                             ],
                           ),

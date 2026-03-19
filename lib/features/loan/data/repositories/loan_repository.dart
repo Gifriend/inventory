@@ -33,21 +33,25 @@ class LoanRepository {
   }
 
   Future<void> createLoan({
-    required PlatformFile pdfFile,
+    PlatformFile? pdfFile,
     required DateTime startTime,
     required DateTime endTime,
   }) async {
-    final multipartFile = await MultipartFile.fromFile(
-      pdfFile.path!,
-      filename: pdfFile.name,
-      contentType: DioMediaType('application', 'pdf'),
-    );
-
-    final formData = FormData.fromMap({
-      'pdf_file': multipartFile,
+    final Map<String, dynamic> data = {
       'start_time': startTime.toIso8601String(),
       'end_time': endTime.toIso8601String(),
-    });
+    };
+
+    if (pdfFile != null && pdfFile.path != null) {
+      final multipartFile = await MultipartFile.fromFile(
+        pdfFile.path!,
+        filename: pdfFile.name,
+        contentType: DioMediaType('application', 'pdf'),
+      );
+      data['pdf_file'] = multipartFile;
+    }
+
+    final formData = FormData.fromMap(data);
 
     await _dio.post<dynamic>(Endpoint.loans, data: formData);
   }

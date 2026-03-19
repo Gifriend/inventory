@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:inventory/core/assets/assets.dart';
+import 'package:inventory/core/constants/constants.dart';
 import 'package:inventory/core/routing/app_routing.dart';
 import 'package:inventory/core/utils/dio_error_mapper.dart';
+import 'package:inventory/core/widgets/widgets.dart';
 import 'package:inventory/features/desk/presentations/desk_controller.dart';
 
 class DeskSelectionScreen extends ConsumerWidget {
@@ -14,24 +17,34 @@ class DeskSelectionScreen extends ConsumerWidget {
     final desksAsync = ref.watch(roomDesksProvider);
     final selectedRoomId = ref.watch(selectedRoomIdProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Select Desk'), elevation: 0),
-      body: Column(
+    return ScaffoldWidget(
+      disableSingleChildScrollView: true,
+      appBar: AppBarWidget(
+        title: 'Pilih Meja',
+        leadIcon: Assets.icons.fill.arrowBack,
+        onPressedLeadIcon: () => context.pop(),
+      ),
+      child: Column(
         children: [
           // Room Selector
           Container(
-            padding: const EdgeInsets.all(16),
-            color: Colors.grey[100],
+            padding: EdgeInsets.all(BaseSize.w16),
+            margin: EdgeInsets.only(top: BaseSize.h12),
+            decoration: BoxDecoration(
+              color: BaseColor.white,
+              borderRadius: BorderRadius.circular(BaseSize.radiusMd),
+              boxShadow: BaseShadow.shadow,
+            ),
             child: roomsAsync.when(
               data: (rooms) {
                 return DropdownButton<int>(
                   isExpanded: true,
-                  hint: const Text('Select a room'),
+                  hint: Text('Pilih ruangan', style: BaseTypography.titleSmall),
                   value: selectedRoomId,
                   items: rooms.map((room) {
                     return DropdownMenuItem(
                       value: room.id,
-                      child: Text(room.name),
+                      child: Text(room.name, style: BaseTypography.titleMedium),
                     );
                   }).toList(),
                   onChanged: (roomId) {
@@ -43,7 +56,7 @@ class DeskSelectionScreen extends ConsumerWidget {
                   },
                 );
               },
-              loading: () => const CircularProgressIndicator(),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, _) =>
                   Text('Error loading rooms: ${mapDioErrorToMessage(error)}'),
             ),
@@ -51,28 +64,32 @@ class DeskSelectionScreen extends ConsumerWidget {
           // Desk Grid
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(BaseSize.w16),
               child: desksAsync.when(
                 data: (desks) {
                   if (desks.isEmpty) {
-                    return const Center(
-                      child: Text('No desks found for this room'),
+                    return Center(
+                      child: Text(
+                        'Tidak ada desk di ruangan ini',
+                        style: BaseTypography.titleMedium,
+                      ),
                     );
                   }
 
                   return GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 4,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                          childAspectRatio: 1.35,
-                        ),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                      crossAxisSpacing: BaseSize.w8,
+                      mainAxisSpacing: BaseSize.h8,
+                      childAspectRatio: 1.35,
+                    ),
                     itemCount: desks.length,
                     itemBuilder: (context, index) {
                       final desk = desks[index];
                       final isAvailable = desk.status == 'available';
-                      final tileColor = isAvailable ? Colors.green : Colors.red;
+                      final tileColor = isAvailable
+                          ? BaseColor.primaryinventory
+                          : BaseColor.error;
 
                       return InkWell(
                         onTap: !isAvailable
@@ -87,13 +104,16 @@ class DeskSelectionScreen extends ConsumerWidget {
                           duration: const Duration(milliseconds: 220),
                           decoration: BoxDecoration(
                             color: tileColor,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(
+                              BaseSize.radiusMd,
+                            ),
+                            boxShadow: BaseShadow.shadow,
                           ),
                           child: Center(
                             child: Text(
                               desk.deskNumber,
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: BaseTypography.titleMedium.copyWith(
+                                color: BaseColor.white,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),

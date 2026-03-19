@@ -22,7 +22,7 @@ class UserHomeScreen extends ConsumerWidget {
         trailIcon: Assets.svg.logOut,
         trailIconColor: BaseColor.white,
         onPressedTrailIcon: () =>
-            () => ref.read(loginControllerProvider.notifier).logout(),
+          ref.read(loginControllerProvider.notifier).logout(),
       ),
       child: ListView(
         padding: EdgeInsets.symmetric(horizontal: BaseSize.w16, vertical: BaseSize.h16),

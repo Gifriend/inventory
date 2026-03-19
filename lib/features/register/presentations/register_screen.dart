@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:inventory/core/widgets/widgets.dart';
 import 'package:inventory/features/login/presentation.dart';
 import 'package:inventory/core/constants/constants.dart';
 
@@ -42,17 +43,23 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final authState = ref.watch(loginControllerProvider);
     final isLoading = authState.isLoading;
 
-    return Scaffold(
-      body: SafeArea(
+    return ScaffoldWidget(
+      disablePadding: true,
+      backgroundColor: BaseColor.cardBackground1,
+      child: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(BaseSize.w16),
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 460),
-              child: Card(
-                elevation: 1,
+              constraints: BoxConstraints(maxWidth: BaseSize.customWidth(460)),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: BaseColor.white,
+                  borderRadius: BorderRadius.circular(BaseSize.radiusMd),
+                  boxShadow: BaseShadow.shadow,
+                ),
                 child: Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: EdgeInsets.all(BaseSize.w20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -126,8 +133,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               },
                       ),
                       Gap.h16,
-                      FilledButton(
-                        onPressed: isLoading
+                      ButtonWidget.primary(
+                        text: isLoading ? 'Loading...' : 'Register',
+                        onTap: isLoading
                             ? null
                             : () async {
                                 await ref
@@ -139,15 +147,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                       role: _role,
                                     );
                               },
-                        child: isLoading
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Text('Register'),
                       ),
                       Gap.h4,
                       TextButton(

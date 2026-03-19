@@ -1,6 +1,8 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:inventory/core/assets/assets.dart';
+import 'package:inventory/core/widgets/widgets.dart';
 import 'package:inventory/core/utils/dio_error_mapper.dart';
 import 'package:inventory/features/desk/presentations/desk_controller.dart';
 import 'package:inventory/features/loan/presentations/loan_controller.dart';
@@ -43,23 +45,33 @@ class _LoanRequestScreenState extends ConsumerState<LoanRequestScreen> {
       );
     });
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Loan Request')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
+    return ScaffoldWidget(
+      disableSingleChildScrollView: true,
+      appBar: AppBarWidget(
+        title: 'Ajukan Peminjaman',
+        leadIcon: Assets.icons.fill.arrowBack,
+        onPressedLeadIcon: () => Navigator.of(context).pop(),
+      ),
+      child: ListView(
+        padding: EdgeInsets.symmetric(
+          horizontal: BaseSize.w16,
+          vertical: BaseSize.h16,
+        ),
         children: [
           Text(
             selectedDesk == null
-                ? 'No desk selected'
+                ? 'Tidak ada desk yang dipilih'
                 : 'Desk: ${selectedDesk.deskNumber}',
+            style: BaseTypography.titleMedium,
           ),
           Gap.h16,
           ListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(
               _startTime == null
-                  ? 'Pick start time'
+                  ? 'Pilih waktu mulai'
                   : 'Start: ${_startTime.toString()}',
+              style: BaseTypography.titleSmall,
             ),
             trailing: const Icon(Icons.access_time),
             onTap: () async {
@@ -92,8 +104,9 @@ class _LoanRequestScreenState extends ConsumerState<LoanRequestScreen> {
             contentPadding: EdgeInsets.zero,
             title: Text(
               _endTime == null
-                  ? 'Pick end time'
+                  ? 'Pilih waktu selesai'
                   : 'End: ${_endTime.toString()}',
+              style: BaseTypography.titleSmall,
             ),
             trailing: const Icon(Icons.access_time_filled),
             onTap: () async {
@@ -123,8 +136,9 @@ class _LoanRequestScreenState extends ConsumerState<LoanRequestScreen> {
             },
           ),
           Gap.h12,
-          OutlinedButton.icon(
-            onPressed: () async {
+          ButtonWidget.outlined(
+            text: _pdfFile == null ? 'Pilih PDF' : _pdfFile!.name,
+            onTap: () async {
               final result = await FilePicker.platform.pickFiles(
                 type: FileType.custom,
                 allowedExtensions: const ['pdf'],
@@ -134,21 +148,21 @@ class _LoanRequestScreenState extends ConsumerState<LoanRequestScreen> {
               }
               setState(() => _pdfFile = result.files.single);
             },
-            icon: const Icon(Icons.picture_as_pdf),
-            label: Text(_pdfFile == null ? 'Choose PDF' : _pdfFile!.name),
           ),
           Gap.h20,
-          ElevatedButton(
-            onPressed: actionState.isLoading
+          ButtonWidget.primary(
+            color: BaseColor.primaryinventory,
+            text: actionState.isLoading ? 'Loading...' : 'Kirim Permintaan',
+            onTap: actionState.isLoading
                 ? null
                 : () async {
                     final start = _startTime;
                     final end = _endTime;
                     final file = _pdfFile;
-                    if (start == null || end == null || file == null) {
+                    if (start == null || end == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Fill all required fields'),
+                          content: Text('Lengkapi semua field wajib'),
                         ),
                       );
                       return;
@@ -162,9 +176,6 @@ class _LoanRequestScreenState extends ConsumerState<LoanRequestScreen> {
                           endTime: end,
                         );
                   },
-            child: actionState.isLoading
-                ? const CircularProgressIndicator(strokeWidth: 2)
-                : const Text('Submit Request'),
           ),
         ],
       ),

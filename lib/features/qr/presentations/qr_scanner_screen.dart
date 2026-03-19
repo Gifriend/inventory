@@ -2,6 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:inventory/core/assets/assets.dart';
+import 'package:inventory/core/constants/constants.dart';
+import 'package:inventory/core/widgets/widgets.dart';
 import 'package:inventory/core/utils/dio_error_mapper.dart';
 import 'package:inventory/features/loan/presentations/loan_controller.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -56,9 +59,13 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
   Widget build(BuildContext context) {
     final actionState = ref.watch(loanActionControllerProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('QR Check-in / Check-out'),
+    return ScaffoldWidget(
+      disablePadding: true,
+      disableSingleChildScrollView: true,
+      appBar: AppBarWidget(
+        title: 'QR Check-in / Check-out',
+        leadIcon: Assets.icons.fill.arrowBack,
+        onPressedLeadIcon: () => Navigator.of(context).pop(),
         actions: [
           TextButton(
             onPressed: actionState.isLoading
@@ -79,11 +86,14 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
                       );
                     }
                   },
-            child: const Text('Check Out'),
+            child: Text(
+              'Check Out',
+              style: BaseTypography.titleSmall.copyWith(color: BaseColor.white),
+            ),
           ),
         ],
       ),
-      body: MobileScanner(
+      child: MobileScanner(
         onDetect: (capture) {
           if (capture.barcodes.isEmpty) {
             return;
