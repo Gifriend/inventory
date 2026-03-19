@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:inventory/core/constants/constants.dart';
 import 'package:inventory/core/routing/app_routing.dart';
 import 'package:inventory/features/login/presentation.dart';
 
@@ -37,7 +38,7 @@ class AslabHomeScreen extends ConsumerWidget {
                       color: colorScheme.onPrimaryContainer,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  Gap.h12,
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,7 +47,7 @@ class AslabHomeScreen extends ConsumerWidget {
                           'Halo, ${user?.name ?? 'Aslab'}',
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
-                        const SizedBox(height: 4),
+                        Gap.h4,
                         Text(
                           'Kelola persetujuan peminjaman dari satu dashboard.',
                           style: Theme.of(context).textTheme.bodyMedium,
@@ -58,7 +59,7 @@ class AslabHomeScreen extends ConsumerWidget {
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          Gap.h12,
           Card(
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(

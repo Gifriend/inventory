@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:inventory/features/login/presentation.dart';
+import 'package:inventory/core/constants/constants.dart';
+
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -68,7 +70,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         subtitle:
                             'Masuk untuk lanjut memantau peminjaman dan penggunaan desk.',
                       ),
-                      const SizedBox(height: 20),
+                      Gap.h20,
                       TextField(
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
@@ -79,7 +81,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           border: OutlineInputBorder(),
                         ),
                       ),
-                      const SizedBox(height: 12),
+                      Gap.h12,
                       TextField(
                         controller: _passwordController,
                         obscureText: _obscurePassword,
@@ -99,7 +101,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      Gap.h16,
                       FilledButton(
                         onPressed: isLoading
                             ? null
@@ -121,7 +123,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               )
                             : const Text('Login'),
                       ),
-                      const SizedBox(height: 8),
+                      Gap.h4,
                       TextButton(
                         onPressed: () => context.go('/register'),
                         child: const Text('Belum punya akun? Daftar'),

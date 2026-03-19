@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:inventory/core/utils/dio_error_mapper.dart';
 import 'package:inventory/features/loan/presentations/dialogs/approve_assignment_dialog.dart';
 import 'package:inventory/features/loan/presentations/loan_controller.dart';
+import 'package:inventory/core/constants/constants.dart';
 
 class ApprovalDashboardScreen extends ConsumerWidget {
   const ApprovalDashboardScreen({super.key});
@@ -46,7 +47,7 @@ class ApprovalDashboardScreen extends ConsumerWidget {
           return ListView.separated(
             padding: const EdgeInsets.all(16),
             itemCount: pending.length,
-            separatorBuilder: (_, separatorIndex) => const SizedBox(height: 10),
+            separatorBuilder: (_, separatorIndex) => Gap.h12,
             itemBuilder: (context, index) {
               final loan = pending[index];
 
@@ -57,12 +58,12 @@ class ApprovalDashboardScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Request #${loan.id}'),
-                      const SizedBox(height: 6),
+                      Gap.h8,
                       Text('User: ${loan.user?.name ?? '-'}'),
                       Text(
                         'Schedule: ${loan.startTime ?? '-'} - ${loan.endTime ?? '-'}',
                       ),
-                      const SizedBox(height: 10),
+                      Gap.h12,
                       Row(
                         children: [
                           Expanded(
@@ -96,7 +97,7 @@ class ApprovalDashboardScreen extends ConsumerWidget {
                               child: const Text('Approve'),
                             ),
                           ),
-                          const SizedBox(width: 10),
+                          Gap.w12,
                           Expanded(
                             child: OutlinedButton(
                               onPressed: actionState.isLoading

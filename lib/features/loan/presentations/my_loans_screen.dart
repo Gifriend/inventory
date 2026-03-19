@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:inventory/core/utils/dio_error_mapper.dart';
 import 'package:inventory/features/loan/presentations/loan_controller.dart';
+import 'package:inventory/core/constants/constants.dart';
+
 
 class MyLoansScreen extends ConsumerWidget {
   const MyLoansScreen({super.key});
@@ -21,15 +23,15 @@ class MyLoansScreen extends ConsumerWidget {
           return ListView.separated(
             padding: const EdgeInsets.all(16),
             itemCount: loans.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 10),
+            separatorBuilder: (_, _) => Gap.h12,
             itemBuilder: (context, index) {
               final loan = loans[index];
               final statusColor = switch (loan.status) {
-                'pending' => Colors.orange,
-                'approved' => Colors.green,
-                'rejected' => Colors.red,
-                'completed' => Colors.blue,
-                _ => Colors.grey,
+                'pending' => BaseColor.grey,
+                'approved' => BaseColor.green,
+                'rejected' => BaseColor.red,
+                'completed' => BaseColor.blue,
+                _ => BaseColor.grey,
               };
 
               return Card(
@@ -57,7 +59,7 @@ class MyLoansScreen extends ConsumerWidget {
                             child: Text(
                               loan.status.toUpperCase(),
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: BaseColor.white,
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -65,7 +67,7 @@ class MyLoansScreen extends ConsumerWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
+                      Gap.h4,
                       if (loan.room != null) Text('Room: ${loan.room!.name}'),
                       if (loan.desk != null)
                         Text('Desk: ${loan.desk!.deskNumber}'),
@@ -78,11 +80,11 @@ class MyLoansScreen extends ConsumerWidget {
                         Text('Checked Out: ${loan.checkOutTime}'),
                       if (loan.adminNotes != null &&
                           loan.adminNotes!.isNotEmpty) ...[
-                        const SizedBox(height: 8),
+                        Gap.h4,
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Colors.grey[200],
+                            color: BaseColor.grey[200],
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Column(

@@ -9,55 +9,55 @@ enum ScreenDensity { ldpi, mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi }
 class BaseSize {
   // [INFO]
   // Sizes that related with width
-  static final w2 = 2.0.w;
-  static final w4 = 4.0.w;
-  static final w8 = 8.0.w;
-  static final w12 = 12.0.w;
-  static final w16 = 16.0.w;
-  static final w20 = 20.0.w;
-  static final w24 = 24.0.w;
-  static final w28 = 28.0.w;
-  static final w32 = 32.0.w;
-  static final w36 = 36.0.w;
-  static final w40 = 40.0.w;
-  static final w48 = 48.0.w;
-  static final w52 = 52.0.w;
-  static final w56 = 56.0.w;
-  static final w64 = 64.0.w;
-  static final w72 = 72.0.w;
-  static final w80 = 80.0.w;
-  static final w96 = 96.0.w;
-  static final w6 = 6.0.w;
-  static var w3 = 3.0.w;
+  static double get w2 => 2.0.w;
+  static double get w4 => 4.0.w;
+  static double get w8 => 8.0.w;
+  static double get w12 => 12.0.w;
+  static double get w16 => 16.0.w;
+  static double get w20 => 20.0.w;
+  static double get w24 => 24.0.w;
+  static double get w28 => 28.0.w;
+  static double get w32 => 32.0.w;
+  static double get w36 => 36.0.w;
+  static double get w40 => 40.0.w;
+  static double get w48 => 48.0.w;
+  static double get w52 => 52.0.w;
+  static double get w56 => 56.0.w;
+  static double get w64 => 64.0.w;
+  static double get w72 => 72.0.w;
+  static double get w80 => 80.0.w;
+  static double get w96 => 96.0.w;
+  static double get w6 => 6.0.w;
+  static double get w3 => 3.0.w;
 
   // [INFO]
   // Sizes that related with height
-  static final h4 = 4.0.h;
-  static final h8 = 8.0.h;
-  static final h12 = 12.0.h;
-  static final h16 = 16.0.h;
-  static final h18 = 18.0.h;
-  static final h20 = 20.0.h;
-  static final h24 = 24.0.h;
-  static final h28 = 28.0.h;
-  static final h32 = 32.0.h;
-  static final h36 = 36.0.h;
-  static final h40 = 40.0.h;
-  static final h48 = 48.0.h;
-  static final h52 = 52.0.h;
-  static final h56 = 56.0.h;
-  static final h64 = 64.0.h;
-  static final h72 = 72.0.h;
-  static final h80 = 80.0.h;
-  static final h96 = 96.0.h;
-  static final h6 = 6.0.h;
+  static double get h4 => 4.0.h;
+  static double get h8 => 8.0.h;
+  static double get h12 => 12.0.h;
+  static double get h16 => 16.0.h;
+  static double get h18 => 18.0.h;
+  static double get h20 => 20.0.h;
+  static double get h24 => 24.0.h;
+  static double get h28 => 28.0.h;
+  static double get h32 => 32.0.h;
+  static double get h36 => 36.0.h;
+  static double get h40 => 40.0.h;
+  static double get h48 => 48.0.h;
+  static double get h52 => 52.0.h;
+  static double get h56 => 56.0.h;
+  static double get h64 => 64.0.h;
+  static double get h72 => 72.0.h;
+  static double get h80 => 80.0.h;
+  static double get h96 => 96.0.h;
+  static double get h6 => 6.0.h;
 
   // [INFO]
   // Sizes that related with radius
-  static final radiusSm = 6.r;
-  static final radiusMd = 12.r;
-  static final radiusLg = 24.r;
-  static final radiusXl = 30.r;
+  static double get radiusSm => 6.r;
+  static double get radiusMd => 12.r;
+  static double get radiusLg => 24.r;
+  static double get radiusXl => 30.r;
 
   /// [INFO]
   /// Sizes for custom width or height outside the 8 pixel rules
@@ -75,45 +75,45 @@ class BaseSize {
 class Gap {
   /// [INFO]
   /// Gaps that related with width
-  static final w4 = SizedBox(width: BaseSize.w4);
-  static final w8 = SizedBox(width: BaseSize.w8);
-  static final w12 = SizedBox(width: BaseSize.w12);
-  static final w16 = SizedBox(width: BaseSize.w16);
-  static final w20 = SizedBox(width: BaseSize.w20);
-  static final w24 = SizedBox(width: BaseSize.w24);
-  static final w28 = SizedBox(width: BaseSize.w28);
-  static final w32 = SizedBox(width: BaseSize.w32);
-  static final w36 = SizedBox(width: BaseSize.w36);
-  static final w40 = SizedBox(width: BaseSize.w40);
-  static final w48 = SizedBox(width: BaseSize.w48);
-  static final w52 = SizedBox(width: BaseSize.w52);
-  static final w56 = SizedBox(width: BaseSize.w56);
-  static final w64 = SizedBox(width: BaseSize.w64);
-  static final w72 = SizedBox(width: BaseSize.w72);
-  static final w80 = SizedBox(width: BaseSize.w80);
+  static SizedBox get w4 => SizedBox(width: BaseSize.w4);
+  static SizedBox get w8 => SizedBox(width: BaseSize.w8);
+  static SizedBox get w12 => SizedBox(width: BaseSize.w12);
+  static SizedBox get w16 => SizedBox(width: BaseSize.w16);
+  static SizedBox get w20 => SizedBox(width: BaseSize.w20);
+  static SizedBox get w24 => SizedBox(width: BaseSize.w24);
+  static SizedBox get w28 => SizedBox(width: BaseSize.w28);
+  static SizedBox get w32 => SizedBox(width: BaseSize.w32);
+  static SizedBox get w36 => SizedBox(width: BaseSize.w36);
+  static SizedBox get w40 => SizedBox(width: BaseSize.w40);
+  static SizedBox get w48 => SizedBox(width: BaseSize.w48);
+  static SizedBox get w52 => SizedBox(width: BaseSize.w52);
+  static SizedBox get w56 => SizedBox(width: BaseSize.w56);
+  static SizedBox get w64 => SizedBox(width: BaseSize.w64);
+  static SizedBox get w72 => SizedBox(width: BaseSize.w72);
+  static SizedBox get w80 => SizedBox(width: BaseSize.w80);
 
-  static final w3 = SizedBox(width: BaseSize.w3);
+  static SizedBox get w3 => SizedBox(width: BaseSize.w3);
 
   /// [INFO]
   /// Gaps that related with height
-  static final h4 = SizedBox(height: BaseSize.h4);
-  static final h8 = SizedBox(height: BaseSize.h8);
-  static final h12 = SizedBox(height: BaseSize.h12);
-  static final h16 = SizedBox(height: BaseSize.h16);
-  static final h20 = SizedBox(height: BaseSize.h20);
-  static final h24 = SizedBox(height: BaseSize.h24);
-  static final h28 = SizedBox(height: BaseSize.h28);
-  static final h32 = SizedBox(height: BaseSize.h32);
-  static final h36 = SizedBox(height: BaseSize.h36);
-  static final h40 = SizedBox(height: BaseSize.h40);
-  static final h48 = SizedBox(height: BaseSize.h48);
-  static final h52 = SizedBox(height: BaseSize.h52);
-  static final h56 = SizedBox(height: BaseSize.h56);
-  static final h64 = SizedBox(height: BaseSize.h64);
-  static final h72 = SizedBox(height: BaseSize.h72);
-  static final h80 = SizedBox(height: BaseSize.h80);
+  static SizedBox get h4 => SizedBox(height: BaseSize.h4);
+  static SizedBox get h8 => SizedBox(height: BaseSize.h8);
+  static SizedBox get h12 => SizedBox(height: BaseSize.h12);
+  static SizedBox get h16 => SizedBox(height: BaseSize.h16);
+  static SizedBox get h20 => SizedBox(height: BaseSize.h20);
+  static SizedBox get h24 => SizedBox(height: BaseSize.h24);
+  static SizedBox get h28 => SizedBox(height: BaseSize.h28);
+  static SizedBox get h32 => SizedBox(height: BaseSize.h32);
+  static SizedBox get h36 => SizedBox(height: BaseSize.h36);
+  static SizedBox get h40 => SizedBox(height: BaseSize.h40);
+  static SizedBox get h48 => SizedBox(height: BaseSize.h48);
+  static SizedBox get h52 => SizedBox(height: BaseSize.h52);
+  static SizedBox get h56 => SizedBox(height: BaseSize.h56);
+  static SizedBox get h64 => SizedBox(height: BaseSize.h64);
+  static SizedBox get h72 => SizedBox(height: BaseSize.h72);
+  static SizedBox get h80 => SizedBox(height: BaseSize.h80);
 
-  static final h6 = SizedBox(height: BaseSize.h6);
+  static SizedBox get h6 => SizedBox(height: BaseSize.h6);
 
   /// [INFO]
   /// Gaps for custom width or height outside the 8 pixel rules

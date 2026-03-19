@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:inventory/core/constants/constants.dart';
+
 
 class AuthHeaderCard extends StatelessWidget {
   const AuthHeaderCard({
@@ -20,9 +22,9 @@ class AuthHeaderCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Icon(icon, size: 44, color: theme.colorScheme.primary),
-        const SizedBox(height: 12),
+        Gap.h12,
         Text(title, style: theme.textTheme.headlineSmall),
-        const SizedBox(height: 6),
+        Gap.h8,
         Text(subtitle, style: theme.textTheme.bodyMedium),
       ],
     );

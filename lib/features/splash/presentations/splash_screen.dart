@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:inventory/core/constants/constants.dart';
 
 class SplashScreen extends ConsumerWidget {
   const SplashScreen({super.key});
@@ -27,19 +28,19 @@ class SplashScreen extends ConsumerWidget {
                       color: colorScheme.onPrimaryContainer,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  Gap.h20,
                   Text(
                     'Inventory Desk Tracking',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  const SizedBox(height: 8),
+                  Gap.h4,
                   Text(
                     'Menyiapkan sesi kamu...',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                  const SizedBox(height: 20),
+                  Gap.h20,
                   const CircularProgressIndicator(),
                 ],
               ),

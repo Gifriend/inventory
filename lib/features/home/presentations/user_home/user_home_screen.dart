@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:inventory/core/constants/constants.dart';
 import 'package:inventory/core/routing/app_routing.dart';
 import 'package:inventory/features/login/presentation.dart';
 import 'package:inventory/features/loan/presentations/my_loans_screen.dart';
@@ -26,19 +27,19 @@ class UserHomeScreen extends ConsumerWidget {
         padding: const EdgeInsets.all(16),
         children: [
           _WelcomeCard(name: user?.name ?? 'User'),
-          const SizedBox(height: 12),
+          Gap.h12,
           _FeatureTile(
             title: 'Pilih Desk',
             subtitle: 'Lihat ketersediaan desk per ruangan',
             icon: Icons.event_seat,
             onTap: () => context.pushNamed(AppRoute.desks),
           ),
-          _FeatureTile(
-            title: 'Ajukan Peminjaman',
-            subtitle: 'Kirim permintaan pinjam desk',
-            icon: Icons.description,
-            onTap: () => context.pushNamed(AppRoute.loanRequest),
-          ),
+          // _FeatureTile(
+          //   title: 'Ajukan Peminjaman',
+          //   subtitle: 'Kirim permintaan pinjam desk',
+          //   icon: Icons.description,
+          //   onTap: () => context.pushNamed(AppRoute.loanRequest),
+          // ),
           _FeatureTile(
             title: 'Riwayat Peminjaman',
             subtitle: 'Pantau status peminjaman kamu',
@@ -80,7 +81,7 @@ class _WelcomeCard extends StatelessWidget {
                 color: colorScheme.onPrimaryContainer,
               ),
             ),
-            const SizedBox(width: 12),
+            Gap.w12,
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,7 +90,7 @@ class _WelcomeCard extends StatelessWidget {
                     'Halo, $name',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  const SizedBox(height: 4),
+                  Gap.h4,
                   Text(
                     'Pilih menu yang ingin kamu akses hari ini.',
                     style: Theme.of(context).textTheme.bodyMedium,

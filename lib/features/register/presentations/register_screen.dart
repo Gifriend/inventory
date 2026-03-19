@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:inventory/features/login/presentation.dart';
+import 'package:inventory/core/constants/constants.dart';
+
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -60,7 +62,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         subtitle:
                             'Isi data berikut untuk mulai menggunakan aplikasi.',
                       ),
-                      const SizedBox(height: 20),
+                      Gap.h20,
                       TextField(
                         controller: _nameController,
                         decoration: const InputDecoration(
@@ -69,7 +71,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           border: OutlineInputBorder(),
                         ),
                       ),
-                      const SizedBox(height: 12),
+                      Gap.h12,
                       TextField(
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
@@ -80,7 +82,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           border: OutlineInputBorder(),
                         ),
                       ),
-                      const SizedBox(height: 12),
+                      Gap.h12,
                       TextField(
                         controller: _passwordController,
                         obscureText: _obscurePassword,
@@ -100,7 +102,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 12),
+                      Gap.h12,
                       DropdownButtonFormField<String>(
                         value: _role,
                         decoration: const InputDecoration(
@@ -123,7 +125,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 }
                               },
                       ),
-                      const SizedBox(height: 16),
+                      Gap.h16,
                       FilledButton(
                         onPressed: isLoading
                             ? null
@@ -147,7 +149,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               )
                             : const Text('Register'),
                       ),
-                      const SizedBox(height: 8),
+                      Gap.h4,
                       TextButton(
                         onPressed: () => context.go('/login'),
                         child: const Text('Sudah punya akun? Login'),

@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:inventory/core/utils/dio_error_mapper.dart';
 import 'package:inventory/features/desk/presentations/desk_controller.dart';
 import 'package:inventory/features/loan/presentations/loan_controller.dart';
+import 'package:inventory/core/constants/constants.dart';
+
 
 class LoanRequestScreen extends ConsumerStatefulWidget {
   const LoanRequestScreen({super.key});
@@ -51,7 +53,7 @@ class _LoanRequestScreenState extends ConsumerState<LoanRequestScreen> {
                 ? 'No desk selected'
                 : 'Desk: ${selectedDesk.deskNumber}',
           ),
-          const SizedBox(height: 16),
+          Gap.h16,
           ListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(
@@ -120,7 +122,7 @@ class _LoanRequestScreenState extends ConsumerState<LoanRequestScreen> {
               });
             },
           ),
-          const SizedBox(height: 12),
+          Gap.h12,
           OutlinedButton.icon(
             onPressed: () async {
               final result = await FilePicker.platform.pickFiles(
@@ -135,7 +137,7 @@ class _LoanRequestScreenState extends ConsumerState<LoanRequestScreen> {
             icon: const Icon(Icons.picture_as_pdf),
             label: Text(_pdfFile == null ? 'Choose PDF' : _pdfFile!.name),
           ),
-          const SizedBox(height: 20),
+          Gap.h20,
           ElevatedButton(
             onPressed: actionState.isLoading
                 ? null
