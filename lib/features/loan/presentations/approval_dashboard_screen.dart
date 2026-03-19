@@ -27,7 +27,11 @@ class ApprovalDashboardScreen extends ConsumerWidget {
           // Refresh loans list after action
           ref.invalidate(loansProvider);
         },
-        error: (error, _) {
+        error: (error, stack) {
+          debugPrint('ApprovalDashboardScreen action error (${error.runtimeType}): ${error.toString()}');
+          debugPrint(mapDioErrorToMessage(error));
+          debugPrintStack(stackTrace: stack as StackTrace?);
+          FlutterError.reportError(FlutterErrorDetails(exception: error, stack: stack as StackTrace?));
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text(mapDioErrorToMessage(error))));

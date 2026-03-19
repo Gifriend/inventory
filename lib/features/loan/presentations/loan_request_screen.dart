@@ -37,7 +37,15 @@ class _LoanRequestScreenState extends ConsumerState<LoanRequestScreen> {
           );
           Navigator.of(context).pop();
         },
-        error: (error, _) {
+        error: (error, stack) {
+          // Log full error info to console so it appears in debugger logs
+          debugPrint('LoanRequestScreen error (${error.runtimeType}): ${error.toString()}');
+          debugPrint(mapDioErrorToMessage(error));
+          // print stack trace (if available)
+          debugPrintStack(stackTrace: stack as StackTrace?);
+          // also report to Flutter error handler so it shows in IDE consoles
+          FlutterError.reportError(FlutterErrorDetails(exception: error, stack: stack as StackTrace?));
+
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text(mapDioErrorToMessage(error))));

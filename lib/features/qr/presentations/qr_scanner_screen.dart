@@ -44,8 +44,12 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Check-in success')));
-    } catch (error) {
+    } catch (error, stack) {
       if (!mounted) return;
+      debugPrint('QrScannerScreen check-in error (${error.runtimeType}): ${error.toString()}');
+      debugPrint(mapDioErrorToMessage(error));
+      debugPrintStack(stackTrace: stack as StackTrace?);
+      FlutterError.reportError(FlutterErrorDetails(exception: error, stack: stack as StackTrace?));
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(mapDioErrorToMessage(error))));

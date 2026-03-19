@@ -31,6 +31,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final previousMessage = previous?.errorMessage;
       final nextMessage = next.errorMessage;
       if (nextMessage != null && nextMessage != previousMessage) {
+        debugPrint('LoginScreen auth error: $nextMessage');
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(nextMessage)));

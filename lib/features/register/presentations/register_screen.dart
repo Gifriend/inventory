@@ -34,6 +34,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       final previousMessage = previous?.errorMessage;
       final nextMessage = next.errorMessage;
       if (nextMessage != null && nextMessage != previousMessage) {
+        debugPrint('RegisterScreen auth error: $nextMessage');
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(nextMessage)));
