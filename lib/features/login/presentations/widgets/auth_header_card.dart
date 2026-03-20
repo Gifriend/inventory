@@ -19,13 +19,14 @@ class AuthHeaderCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(icon, size: 44, color: theme.colorScheme.primary),
         Gap.h12,
         Text(title, style: theme.textTheme.headlineSmall),
         Gap.h8,
-        Text(subtitle, style: theme.textTheme.bodyMedium),
+        Text(subtitle, style: theme.textTheme.bodyMedium, textAlign: TextAlign.center),
       ],
     );
   }

@@ -14,9 +14,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _obscurePassword = true;
+  final bool _obscurePassword = true;
 
   void _showMessage(String message) {
     ScaffoldMessenger.of(
@@ -25,30 +23,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _submit() async {
-    final email = _emailController.text.trim();
-    final password = _passwordController.text;
-
-    if (email.isEmpty || password.isEmpty) {
-      _showMessage('Email dan password wajib diisi.');
-      return;
-    }
-
-    final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-    if (!emailRegex.hasMatch(email)) {
-      _showMessage('Format email tidak valid.');
-      return;
-    }
-
-    await ref
-        .read(loginControllerProvider.notifier)
-        .login(email: email, password: password);
-  }
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
+    await ref.read(loginControllerProvider.notifier).submit();
   }
 
   @override
@@ -74,77 +49,96 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     });
 
     final authState = ref.watch(loginControllerProvider);
-    final isLoading = authState.isLoading;
+    final isLoading = authState.status == LoginSubmitStatus.loading;
 
     return ScaffoldWidget(
       disablePadding: true,
-      backgroundColor: BaseColor.cardBackground1,
-      child: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(BaseSize.w16),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: BaseSize.customWidth(460)),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: BaseColor.white,
-                  borderRadius: BorderRadius.circular(BaseSize.radiusMd),
-                  boxShadow: BaseShadow.shadow,
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(BaseSize.w20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const AuthHeaderCard(
-                        icon: Icons.inventory_2_rounded,
-                        title: 'Selamat datang kembali',
-                        subtitle:
-                            'Masuk untuk lanjut memantau peminjaman dan penggunaan desk.',
-                      ),
-                      Gap.h20,
-                      TextField(
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: const InputDecoration(
-                          labelText: 'Email',
-                          hintText: 'nama@email.com',
-                          prefixIcon: Icon(Icons.email_outlined),
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      Gap.h12,
-                      TextField(
-                        controller: _passwordController,
-                        obscureText: _obscurePassword,
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          prefixIcon: const Icon(Icons.lock_outline),
-                          border: const OutlineInputBorder(),
-                          suffixIcon: IconButton(
-                            onPressed: () => setState(() {
-                              _obscurePassword = !_obscurePassword;
-                            }),
-                            icon: Icon(
-                              _obscurePassword
-                                  ? Icons.visibility_off_outlined
-                                  : Icons.visibility_outlined,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Gap.h16,
-                      ButtonWidget.primary(
-                        text: isLoading ? 'Loading...' : 'Login',
-                        onTap: isLoading ? null : _submit,
-                      ),
-                      Gap.h4,
-                      TextButton(
-                        onPressed: () => context.go('/register'),
-                        child: const Text('Belum punya akun? Daftar'),
-                      ),
-                    ],
-                  ),
+      disableSingleChildScrollView: true,
+      backgroundColor: BaseColor.primaryinventory2,
+      child: Center(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(BaseSize.w16),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: BaseSize.customWidth(460)),
+            child: Container(
+              decoration: BoxDecoration(
+                color: BaseColor.white,
+                borderRadius: BorderRadius.circular(BaseSize.radiusMd),
+                boxShadow: BaseShadow.shadow,
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(BaseSize.w20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const AuthHeaderCard(
+                      icon: Icons.inventory_2_rounded,
+                      title: 'Selamat datang kembali',
+                      subtitle:
+                          'Masuk untuk lanjut memantau peminjaman dan penggunaan desk.',
+                    ),
+                    Gap.h20,
+                    InputWidget<String>.text(
+                      borderColor: BaseColor.primaryinventory2,
+                      currentInputValue: authState.email,
+                      onChanged: (value) => ref
+                          .read(loginControllerProvider.notifier)
+                          .updateEmail(value),
+                      label: 'Email',
+                      hint: 'nama@email.com',
+                      textInputType: TextInputType.emailAddress,
+                      validators: (value) {
+                        if (value.isEmpty) return 'Email wajib diisi.';
+                        final emailRegex = RegExp(
+                          r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
+                        );
+                        if (!emailRegex.hasMatch(value)) {
+                          return 'Format email tidak valid.';
+                        }
+                        return '';
+                      },
+                    ),
+                    Gap.h12,
+                    InputWidget<String>.text(
+                      borderColor: BaseColor.primaryinventory2,
+                      currentInputValue: authState.password,
+                      onChanged: (value) => ref
+                          .read(loginControllerProvider.notifier)
+                          .updatePassword(value),
+                      label: 'Password',
+                      obscureText: _obscurePassword,
+                      validators: (value) {
+                        if (value.isEmpty) return 'Password wajib diisi.';
+                        return '';
+                      },
+                      endIcon: null,
+                    ),
+                    // Align(
+                    //   alignment: Alignment.centerRight,
+                    //   child: IconButton(
+                    //     onPressed: () => setState(() {
+                    //       _obscurePassword = !_obscurePassword;
+                    //     }),
+                    //     icon: Icon(
+                    //       _obscurePassword
+                    //           ? Icons.visibility_off_outlined
+                    //           : Icons.visibility_outlined,
+                    //       color: BaseColor.neutral[700],
+                    //     ),
+                    //   ),
+                    // ),
+                    Gap.h16,
+                    ButtonWidget.primary(
+                      color: BaseColor.primaryinventory,
+                      text: isLoading ? 'Loading...' : 'Login',
+                      onTap: isLoading ? null : _submit,
+                    ),
+                    Gap.h4,
+                    TextButton(
+                      onPressed: () => context.go('/register'),
+                      child: const Text('Belum punya akun? Daftar'),
+                    ),
+                  ],
                 ),
               ),
             ),

@@ -40,16 +40,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       final role = (user?.role ?? 'user').toLowerCase();
       final roleHome = role == 'aslab' ? '/aslab' : '/user';
 
-      if (kDebugMode) {
-        debugPrint(
-          '[router] redirect check -> loc=$location init=${authState.isInitializing} user=${user?.id} role=$role',
-        );
-      }
-
-      if (authState.isInitializing) {
-        return null;
-      }
-
       if (location == '/') {
         if (user == null) {
           if (kDebugMode) debugPrint('[router] at root, no user -> /login');
@@ -144,15 +134,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     ],
   );
 
-  ref.listen<LoginState>(loginControllerProvider, (previous, next) {
-    final didInitializingChange =
-        previous?.isInitializing != next.isInitializing;
-    final didUserChange = previous?.user != next.user;
+  // ref.listen<LoginState>(loginControllerProvider, (previous, next) {
+  //   // final didInitializingChange =
+  //       // previous?.isInitializing != next.isInitializing;
+  //   final didUserChange = previous?.user != next.user;
 
-    if (didInitializingChange || didUserChange) {
-      router.refresh();
-    }
-  });
+  //   if (didInitializingChange || didUserChange) {
+  //     router.refresh();
+  //   }
+  // });
 
   return router;
 });

@@ -1,1 +1,3 @@
-// Register feature uses login application controller.
+export 'presentations/register_controller.dart';
+export 'presentations/register_state.dart';
+

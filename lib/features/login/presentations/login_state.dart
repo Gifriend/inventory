@@ -1,31 +1,19 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:inventory/core/models/user_model.dart';
 
-class LoginState {
-  const LoginState({
-    this.isInitializing = true,
-    this.isLoading = false,
-    this.user,
-    this.errorMessage,
-  });
+part 'login_state.freezed.dart';
 
-  final bool isInitializing;
-  final bool isLoading;
-  final UserModel? user;
-  final String? errorMessage;
+enum LoginSubmitStatus { initial, loading, success, error }
 
-  LoginState copyWith({
-    bool? isInitializing,
-    bool? isLoading,
+@freezed
+abstract class LoginState with _$LoginState {
+  const factory LoginState({
+    @Default(LoginSubmitStatus.initial) LoginSubmitStatus status,
+    @Default('') String email,
+    @Default('') String password,
     UserModel? user,
-    bool clearUser = false,
     String? errorMessage,
-    bool clearError = false,
-  }) {
-    return LoginState(
-      isInitializing: isInitializing ?? this.isInitializing,
-      isLoading: isLoading ?? this.isLoading,
-      user: clearUser ? null : (user ?? this.user),
-      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
-    );
-  }
+  }) = _LoginState;
+
+  factory LoginState.initial() => const LoginState();
 }
