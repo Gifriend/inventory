@@ -1,6 +1,11 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class Endpoint {
-  // Append /api so Laravel API routes (which are prefixed with /api) resolve correctly.
-  static String get baseUrl => 'https://unconcernedly-acetylic-shirleen.ngrok-free.dev/api';
+  static String get baseUrl {
+    final raw = (dotenv.env['BASE_URL'] ?? '').trim();
+    if (raw.isEmpty) return '';
+    return raw.endsWith('/api') ? raw : '$raw/api';
+  }
 
   static const String register = '/register';
   static const String login = '/login';

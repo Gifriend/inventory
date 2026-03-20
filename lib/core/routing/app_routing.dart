@@ -2,7 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:inventory/features/presentation.dart';
+import 'package:inventory/features/desk/presentation.dart';
+import 'package:inventory/features/home/presentation.dart';
+import 'package:inventory/features/loan/presentation.dart';
+import 'package:inventory/features/login/application.dart';
+import 'package:inventory/features/login/presentation.dart';
+import 'package:inventory/features/qr/presentation.dart';
+import 'package:inventory/features/register/presentation.dart';
+import 'package:inventory/features/splash/presentation.dart';
 
 class AppRoute {
   static const String splash = 'splash';
@@ -22,7 +29,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 final goRouterProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
     navigatorKey: navigatorKey,
-    initialLocation: '/splash',
+    initialLocation: '/',
     debugLogDiagnostics: kDebugMode,
     redirect: (context, state) {
       final authState = ref.read(loginControllerProvider);
@@ -34,19 +41,21 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       final roleHome = role == 'aslab' ? '/aslab' : '/user';
 
       if (kDebugMode) {
-        debugPrint('[router] redirect check -> loc=$location init=${authState.isInitializing} user=${user?.id} role=$role');
+        debugPrint(
+          '[router] redirect check -> loc=$location init=${authState.isInitializing} user=${user?.id} role=$role',
+        );
       }
 
       if (authState.isInitializing) {
         return null;
       }
 
-      if (location == '/splash') {
+      if (location == '/') {
         if (user == null) {
-          if (kDebugMode) debugPrint('[router] at splash, no user -> /login');
+          if (kDebugMode) debugPrint('[router] at root, no user -> /login');
           return '/login';
         }
-        if (kDebugMode) debugPrint('[router] at splash, user -> $roleHome');
+        if (kDebugMode) debugPrint('[router] at root, user -> $roleHome');
         return roleHome;
       }
 
@@ -57,19 +66,25 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       }
 
       if (isGuestRoute) {
-        if (kDebugMode) debugPrint('[router] guest route with user -> $roleHome');
+        if (kDebugMode) {
+          debugPrint('[router] guest route with user -> $roleHome');
+        }
         return roleHome;
       }
 
       final isAslabArea =
           location.startsWith('/aslab') || location.startsWith('/approval');
       if (role == 'aslab' && !isAslabArea) {
-        if (kDebugMode) debugPrint('[router] aslab blocked from $location -> /aslab');
+        if (kDebugMode) {
+          debugPrint('[router] aslab blocked from $location -> /aslab');
+        }
         return '/aslab';
       }
 
       if (role != 'aslab' && isAslabArea) {
-        if (kDebugMode) debugPrint('[router] user blocked from $location -> /user');
+        if (kDebugMode) {
+          debugPrint('[router] user blocked from $location -> /user');
+        }
         return '/user';
       }
 
@@ -77,7 +92,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     },
     routes: [
       GoRoute(
-        path: '/splash',
+        path: '/',
         name: AppRoute.splash,
         builder: (context, state) => const SplashScreen(),
       ),
@@ -130,7 +145,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
   );
 
   ref.listen<LoginState>(loginControllerProvider, (previous, next) {
-    final didInitializingChange = previous?.isInitializing != next.isInitializing;
+    final didInitializingChange =
+        previous?.isInitializing != next.isInitializing;
     final didUserChange = previous?.user != next.user;
 
     if (didInitializingChange || didUserChange) {

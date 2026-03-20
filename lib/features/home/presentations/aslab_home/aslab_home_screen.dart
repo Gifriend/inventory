@@ -5,7 +5,7 @@ import 'package:inventory/core/assets/assets.dart';
 import 'package:inventory/core/constants/constants.dart';
 import 'package:inventory/core/routing/app_routing.dart';
 import 'package:inventory/core/widgets/widgets.dart';
-import 'package:inventory/features/login/presentation.dart';
+import 'package:inventory/features/login/application.dart';
 
 class AslabHomeScreen extends ConsumerWidget {
   const AslabHomeScreen({super.key});
@@ -85,7 +85,10 @@ class AslabHomeScreen extends ConsumerWidget {
                   color: BaseColor.cardBackground1,
                 ),
               ),
-              title: Text('Approval Dashboard', style: BaseTypography.titleMedium),
+              title: Text(
+                'Approval Dashboard',
+                style: BaseTypography.titleMedium,
+              ),
               subtitle: Text(
                 'Setujui atau tolak permintaan yang masuk',
                 style: BaseTypography.titleSmall,
@@ -114,7 +117,10 @@ class AslabHomeScreen extends ConsumerWidget {
                 ),
               ),
               title: Text('QR Meja', style: BaseTypography.titleMedium),
-              subtitle: Text('Lihat dan unduh QR untuk setiap meja', style: BaseTypography.titleSmall),
+              subtitle: Text(
+                'Lihat dan unduh QR untuk setiap meja',
+                style: BaseTypography.titleSmall,
+              ),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.pushNamed(AppRoute.aslabDeskQr),
             ),

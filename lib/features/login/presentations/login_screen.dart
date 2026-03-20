@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:inventory/core/widgets/widgets.dart';
-import 'package:inventory/features/login/presentation.dart';
 import 'package:inventory/core/constants/constants.dart';
-
+import 'package:inventory/features/login/application.dart';
+import 'package:inventory/features/login/presentations/widgets/auth_header_card.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -17,6 +17,32 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _submit() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      _showMessage('Email dan password wajib diisi.');
+      return;
+    }
+
+    final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+    if (!emailRegex.hasMatch(email)) {
+      _showMessage('Format email tidak valid.');
+      return;
+    }
+
+    await ref
+        .read(loginControllerProvider.notifier)
+        .login(email: email, password: password);
+  }
 
   @override
   void dispose() {
@@ -32,9 +58,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final nextMessage = next.errorMessage;
       if (nextMessage != null && nextMessage != previousMessage) {
         debugPrint('LoginScreen auth error: $nextMessage');
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(nextMessage)));
+        _showMessage(nextMessage);
       }
     });
 
@@ -112,16 +136,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       Gap.h16,
                       ButtonWidget.primary(
                         text: isLoading ? 'Loading...' : 'Login',
-                        onTap: isLoading
-                            ? null
-                            : () async {
-                                await ref
-                                    .read(loginControllerProvider.notifier)
-                                    .login(
-                                      email: _emailController.text.trim(),
-                                      password: _passwordController.text,
-                                    );
-                              },
+                        onTap: isLoading ? null : _submit,
                       ),
                       Gap.h4,
                       TextButton(

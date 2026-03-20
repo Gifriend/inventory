@@ -6,14 +6,37 @@ import 'package:inventory/core/data_sources/network/dio_client.dart';
 import 'package:inventory/core/models/loan_model.dart';
 
 final loanRepositoryProvider = Provider<LoanRepository>(
-  (ref) => LoanRepository(ref.watch(dioProvider)),
+  (ref) => LoanRepositoryImpl(ref.watch(dioProvider)),
 );
 
-class LoanRepository {
-  LoanRepository(this._dio);
+abstract class LoanRepository {
+  Future<List<LoanModel>> getLoans();
+
+  Future<void> createLoan({
+    PlatformFile? pdfFile,
+    required DateTime startTime,
+    required DateTime endTime,
+  });
+
+  Future<void> approveLoan({
+    required int loanId,
+    required int roomId,
+    required int deskId,
+  });
+
+  Future<void> rejectLoan({required int loanId, required String notes});
+
+  Future<void> checkIn({required int roomId, required int deskId});
+
+  Future<void> checkOut();
+}
+
+class LoanRepositoryImpl implements LoanRepository {
+  LoanRepositoryImpl(this._dio);
 
   final Dio _dio;
 
+  @override
   Future<List<LoanModel>> getLoans() async {
     final response = await _dio.get<dynamic>(Endpoint.loans);
     final data = response.data;
@@ -42,6 +65,7 @@ class LoanRepository {
     return [];
   }
 
+  @override
   Future<void> createLoan({
     PlatformFile? pdfFile,
     required DateTime startTime,
@@ -66,6 +90,7 @@ class LoanRepository {
     await _dio.post<dynamic>(Endpoint.loans, data: formData);
   }
 
+  @override
   Future<void> approveLoan({
     required int loanId,
     required int roomId,
@@ -77,6 +102,7 @@ class LoanRepository {
     );
   }
 
+  @override
   Future<void> rejectLoan({required int loanId, required String notes}) async {
     await _dio.patch<dynamic>(
       Endpoint.rejectLoan(loanId),
@@ -84,6 +110,7 @@ class LoanRepository {
     );
   }
 
+  @override
   Future<void> checkIn({required int roomId, required int deskId}) async {
     await _dio.post<dynamic>(
       Endpoint.checkIn,
@@ -91,6 +118,7 @@ class LoanRepository {
     );
   }
 
+  @override
   Future<void> checkOut() async {
     await _dio.post<dynamic>(Endpoint.checkOut);
   }

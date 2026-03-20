@@ -6,14 +6,21 @@ import 'package:inventory/core/models/desk_model.dart';
 import 'package:inventory/core/models/room_model.dart';
 
 final roomRepositoryProvider = Provider<RoomRepository>(
-  (ref) => RoomRepository(ref.watch(dioProvider)),
+  (ref) => RoomRepositoryImpl(ref.watch(dioProvider)),
 );
 
-class RoomRepository {
-  RoomRepository(this._dio);
+abstract class RoomRepository {
+  Future<List<RoomModel>> getAllRooms();
+
+  Future<List<DeskModel>> getRoomDesks(int roomId);
+}
+
+class RoomRepositoryImpl implements RoomRepository {
+  RoomRepositoryImpl(this._dio);
 
   final Dio _dio;
 
+  @override
   Future<List<RoomModel>> getAllRooms() async {
     final response = await _dio.get<dynamic>(Endpoint.rooms);
     final data = response.data;
@@ -32,6 +39,7 @@ class RoomRepository {
         .toList();
   }
 
+  @override
   Future<List<DeskModel>> getRoomDesks(int roomId) async {
     final response = await _dio.get<dynamic>(Endpoint.roomDesks(roomId));
     final data = response.data;

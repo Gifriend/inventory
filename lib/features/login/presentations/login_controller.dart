@@ -32,7 +32,9 @@ class LoginController extends Notifier<LoginState> {
     }
 
     state = state.copyWith(isInitializing: false, user: cachedUser);
-    debugPrint('[login] hydrate session: cache found user=${cachedUser?.id} role=${cachedUser?.role}');
+    debugPrint(
+      '[login] hydrate session: cache found user=${cachedUser?.id} role=${cachedUser?.role}',
+    );
   }
 
   Future<void> login({required String email, required String password}) async {
@@ -50,14 +52,15 @@ class LoginController extends Notifier<LoginState> {
         user: result.user,
         clearError: true,
       );
-      debugPrint('[login] login success user=${result.user.id} role=${result.user.role}');
+      debugPrint(
+        '[login] login success user=${result.user.id} role=${result.user.role}',
+      );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
         errorMessage: mapDioErrorToMessage(e),
       );
       debugPrint('[login] login failed: ${mapDioErrorToMessage(e)}');
-      rethrow;
     }
   }
 
@@ -70,12 +73,9 @@ class LoginController extends Notifier<LoginState> {
     state = state.copyWith(isLoading: true, clearError: true);
     try {
       debugPrint('[login] attempting register for $email role=$role');
-      final result = await ref.read(registerRepositoryProvider).register(
-            name: name,
-            email: email,
-            password: password,
-            role: role,
-          );
+      final result = await ref
+          .read(registerRepositoryProvider)
+          .register(name: name, email: email, password: password, role: role);
       await ref.read(secureStorageServiceProvider).saveToken(result.token);
       await ref.read(hiveServiceProvider).saveUser(result.user);
       state = state.copyWith(
@@ -84,14 +84,15 @@ class LoginController extends Notifier<LoginState> {
         user: result.user,
         clearError: true,
       );
-      debugPrint('[login] register success user=${result.user.id} role=${result.user.role}');
+      debugPrint(
+        '[login] register success user=${result.user.id} role=${result.user.role}',
+      );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
         errorMessage: mapDioErrorToMessage(e),
       );
       debugPrint('[login] register failed: ${mapDioErrorToMessage(e)}');
-      rethrow;
     }
   }
 

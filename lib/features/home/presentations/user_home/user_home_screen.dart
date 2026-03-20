@@ -5,7 +5,7 @@ import 'package:inventory/core/assets/assets.dart';
 import 'package:inventory/core/constants/constants.dart';
 import 'package:inventory/core/routing/app_routing.dart';
 import 'package:inventory/core/widgets/widgets.dart';
-import 'package:inventory/features/login/presentation.dart';
+import 'package:inventory/features/login/application.dart';
 import 'package:inventory/features/loan/presentations/my_loans_screen.dart';
 
 class UserHomeScreen extends ConsumerWidget {
@@ -22,10 +22,13 @@ class UserHomeScreen extends ConsumerWidget {
         trailIcon: Assets.svg.logOut,
         trailIconColor: BaseColor.white,
         onPressedTrailIcon: () =>
-          ref.read(loginControllerProvider.notifier).logout(),
+            ref.read(loginControllerProvider.notifier).logout(),
       ),
       child: ListView(
-        padding: EdgeInsets.symmetric(horizontal: BaseSize.w16, vertical: BaseSize.h16),
+        padding: EdgeInsets.symmetric(
+          horizontal: BaseSize.w16,
+          vertical: BaseSize.h16,
+        ),
         children: [
           _WelcomeCard(name: user?.name ?? 'User'),
           Gap.h12,

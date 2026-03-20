@@ -29,20 +29,26 @@ class RegisterRepositoryImpl implements RegisterRepository {
     required String password,
     required String role,
   }) async {
-    final response = await _dio.post<dynamic>(
+    await _dio.post<dynamic>(
       Endpoint.register,
       data: {'name': name, 'email': email, 'password': password, 'role': role},
     );
 
-    final data = response.data;
-    if (data is! Map<String, dynamic>) {
-      throw const FormatException('Invalid register response');
+    final loginResponse = await _dio.post<dynamic>(
+      Endpoint.login,
+      data: {'email': email, 'password': password},
+    );
+
+    final loginData = loginResponse.data;
+    if (loginData is! Map<String, dynamic>) {
+      throw const FormatException('Invalid login response after register');
     }
 
-    final token = data['token']?.toString() ?? '';
-    final userJson = data['user_data'] ?? data['data'] ?? data['user'];
+    final token = loginData['token']?.toString() ?? '';
+    final userJson =
+        loginData['user_data'] ?? loginData['data'] ?? loginData['user'];
     if (token.isEmpty || userJson is! Map<String, dynamic>) {
-      throw const FormatException('Invalid register payload');
+      throw const FormatException('Invalid login payload after register');
     }
 
     return (token: token, user: UserModel.fromJson(userJson));
