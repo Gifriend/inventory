@@ -41,9 +41,17 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
           .read(loanActionControllerProvider.notifier)
           .checkIn(roomId: roomId, deskId: deskId);
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Check-in success')));
+      // show success dialog instead of SnackBar
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Check-In Berhasil'),
+          content: const Text('Anda berhasil melakukan check-in. Selamat menggunakan fasilitas.'),
+          actions: [
+            TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('OK')),
+          ],
+        ),
+      );
     } catch (error, stack) {
       if (!mounted) return;
       debugPrint('QrScannerScreen check-in error (${error.runtimeType}): ${error.toString()}');
@@ -80,8 +88,15 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
                           .read(loanActionControllerProvider.notifier)
                           .checkOut();
                       if (!context.mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Check-out success')),
+                      await showDialog<void>(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Check-Out Berhasil'),
+                          content: const Text('Terima kasih, Anda telah berhasil check-out.'),
+                          actions: [
+                            TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('OK')),
+                          ],
+                        ),
                       );
                     } catch (error) {
                       if (!context.mounted) return;
