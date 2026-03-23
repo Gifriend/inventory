@@ -107,7 +107,7 @@ class LoanRepositoryImpl implements LoanRepository {
   }
 
   static List<LoanModel> _parseLoanModels(dynamic raw) {
-    final envelope = ApiEnvelope.fromDynamic<List<LoanModel>>(
+    final ApiResponse<List<LoanModel>> envelope = ApiEnvelope.fromDynamic<List<LoanModel>>(
       raw,
       dataParser: (data) {
         if (data is List) {

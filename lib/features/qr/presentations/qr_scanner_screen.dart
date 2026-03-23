@@ -161,7 +161,7 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
       ),
       builder: (ctx) {
         return Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(BaseSize.w16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,18 +180,18 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              Gap.h8,
               const Text(
                 'Apakah Anda yakin ingin menyelesaikan sesi peminjaman sekarang?',
               ),
-              const SizedBox(height: 12),
+              Gap.h12,
               // small hint / summary area
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(12),
+                padding: EdgeInsets.all(BaseSize.w12),
                 decoration: BoxDecoration(
                   color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(BaseSize.radiusSm),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,7 +202,7 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
+              Gap.h16,
               Row(
                 children: [
                   Expanded(
@@ -248,10 +248,10 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
                 color: Colors.transparent,
                 child: Container(
                   width: 300,
-                  padding: const EdgeInsets.all(20),
+                  padding: EdgeInsets.all(BaseSize.w24),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(BaseSize.radiusXl),
                     boxShadow: [
                       BoxShadow(color: Colors.black26, blurRadius: 12),
                     ],
@@ -264,18 +264,18 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
                         color: Colors.green.shade600,
                         size: 88,
                       ),
-                      const SizedBox(height: 12),
+                      Gap.h12,
                       Text(
                         'Check-Out Berhasil',
                         style: BaseTypography.titleLarge.copyWith(
                           color: Colors.black,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      Gap.h8,
                       const Text(
                         'Terima kasih telah menggunakan fasilitas lab.',
                       ),
-                      const SizedBox(height: 16),
+                      Gap.h16,
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(

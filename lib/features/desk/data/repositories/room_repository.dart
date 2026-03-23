@@ -86,7 +86,7 @@ class RoomRepositoryImpl implements RoomRepository {
     dynamic raw,
     T Function(Object data) parser,
   ) {
-    final envelope = ApiEnvelope.fromDynamic<List<T>>(
+    final ApiResponse<List<T>> envelope = ApiEnvelope.fromDynamic<List<T>>(
       raw,
       dataParser: (data) {
         if (data is List) {

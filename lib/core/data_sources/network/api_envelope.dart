@@ -1,3 +1,6 @@
+typedef ApiResponse<T> = ApiEnvelope<T>;
+typedef ApiListResponse<T> = ApiEnvelope<List<T>>;
+
 class ApiEnvelope<T> {
   const ApiEnvelope({
     required this.status,
