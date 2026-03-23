@@ -24,11 +24,10 @@ class MyLoansScreen extends ConsumerWidget {
       child: loansAsync.when(
         data: (loans) {
           if (loans.isEmpty) {
-            return Center(
-              child: Text(
-                'Belum ada riwayat peminjaman',
-                style: BaseTypography.titleMedium,
-              ),
+            return const EmptyStateWidget(
+              icon: Icons.history,
+              title: 'Tidak ada riwayat',
+              subtitle: 'Belum ada pinjaman selesai atau dibatalkan.',
             );
           }
 

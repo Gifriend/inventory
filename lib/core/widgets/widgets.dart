@@ -39,5 +39,7 @@ export 'segment_title/segment_title.dart';
 
 export 'chips/chips_widget.dart';
 
+export 'state/empty_state_widget.dart';
+
 //dropdown
 export 'dropdown/dropdown_widget.dart';

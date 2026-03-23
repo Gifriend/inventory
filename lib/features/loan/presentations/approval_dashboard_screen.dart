@@ -52,11 +52,10 @@ class ApprovalDashboardScreen extends ConsumerWidget {
               .where((loan) => loan.status == 'pending')
               .toList();
           if (pending.isEmpty) {
-            return Center(
-              child: Text(
-                'Tidak ada permintaan pending',
-                style: BaseTypography.titleMedium,
-              ),
+            return const EmptyStateWidget(
+              icon: Icons.hourglass_empty,
+              title: 'Tidak ada permintaan pending',
+              subtitle: 'Semua peminjaman telah diproses.',
             );
           }
 
