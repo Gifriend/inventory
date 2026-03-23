@@ -18,7 +18,7 @@ Future<void> showSuccessAlertDialogWidget(
 		action: action,
 		actionButtonTitle: actionButtonTitle,
 		isDissmissible: isDissmissible,
-		icon: Assets.images.check.image(
+		icon: Assets.icons.fill.checkCircle.svg(
 			width: BaseSize.customWidth(100),
 			height: BaseSize.customWidth(100),
 		),
