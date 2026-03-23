@@ -29,7 +29,7 @@ class DeskSelectionScreen extends ConsumerWidget {
           // Room Selector
           Container(
             padding: EdgeInsets.all(BaseSize.w16),
-            margin: EdgeInsets.only(top: BaseSize.h12),
+            margin: EdgeInsets.only(top: BaseSize.h16),
             decoration: BoxDecoration(
               color: BaseColor.white,
               borderRadius: BorderRadius.circular(BaseSize.radiusMd),

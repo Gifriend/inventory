@@ -12,7 +12,7 @@ class MyLoansScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final loansAsync = ref.watch(loansProvider);
+    final loansAsync = ref.watch(loanHistoryProvider);
 
     return ScaffoldWidget(
       disableSingleChildScrollView: true,
@@ -38,7 +38,7 @@ class MyLoansScreen extends ConsumerWidget {
               vertical: BaseSize.h16,
             ),
             itemCount: loans.length,
-            separatorBuilder: (_, _) => Gap.h12,
+            separatorBuilder: (_, _) => Gap.h16,
             itemBuilder: (context, index) {
               final loan = loans[index];
               final statusColor = switch (loan.status) {
@@ -88,7 +88,7 @@ class MyLoansScreen extends ConsumerWidget {
                           ),
                         ],
                       ),
-                      Gap.h4,
+                      Gap.h8,
                       if (loan.room != null) Text('Room: ${loan.room!.name}'),
                       if (loan.desk != null)
                         Text('Desk: ${loan.desk!.deskNumber}'),
@@ -108,7 +108,7 @@ class MyLoansScreen extends ConsumerWidget {
                         ),
                       if (loan.adminNotes != null &&
                           loan.adminNotes!.isNotEmpty) ...[
-                        Gap.h4,
+                        Gap.h8,
                         Container(
                           padding: EdgeInsets.all(BaseSize.w8),
                           decoration: BoxDecoration(

@@ -49,7 +49,7 @@ class AslabDeskQrScreen extends ConsumerWidget {
               error: (e, _) => Text(mapDioErrorToMessage(e)),
             ),
           ),
-          Gap.h12,
+          Gap.h16,
           Expanded(
             child: Padding(
               padding: EdgeInsets.all(BaseSize.w16),

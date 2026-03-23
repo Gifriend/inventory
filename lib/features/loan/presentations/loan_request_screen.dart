@@ -143,7 +143,7 @@ class _LoanRequestScreenState extends ConsumerState<LoanRequestScreen> {
               });
             },
           ),
-          Gap.h12,
+          Gap.h16,
           ButtonWidget.outlined(
             text: _pdfFile == null ? 'Pilih PDF' : _pdfFile!.name,
             onTap: () async {
@@ -157,7 +157,7 @@ class _LoanRequestScreenState extends ConsumerState<LoanRequestScreen> {
               setState(() => _pdfFile = result.files.single);
             },
           ),
-          Gap.h20,
+          Gap.h24,
           ButtonWidget.primary(
             color: BaseColor.primaryinventory,
             text: actionState.isLoading ? 'Loading...' : 'Kirim Permintaan',

@@ -66,7 +66,7 @@ class ApprovalDashboardScreen extends ConsumerWidget {
               vertical: BaseSize.h16,
             ),
             itemCount: pending.length,
-            separatorBuilder: (_, separatorIndex) => Gap.h12,
+            separatorBuilder: (_, separatorIndex) => Gap.h16,
             itemBuilder: (context, index) {
               final loan = pending[index];
 
@@ -96,7 +96,7 @@ class ApprovalDashboardScreen extends ConsumerWidget {
                         'Schedule: ${loan.startTime ?? '-'} - ${loan.endTime ?? '-'}',
                         style: BaseTypography.titleSmall,
                       ),
-                      Gap.h12,
+                      Gap.h16,
                       Row(
                         children: [
                           Expanded(
