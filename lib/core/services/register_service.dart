@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:inventory/core/config/endpoint.dart';
+import 'package:inventory/core/data_sources/network/api_envelope.dart';
 import 'package:inventory/core/data_sources/network/dio_client.dart';
 import 'package:inventory/core/models/user_model.dart';
 
@@ -29,10 +30,16 @@ class RegisterServiceImpl implements RegisterService {
     required String password,
     required String role,
   }) async {
-    const role = 'user';
+    const defaultRole = 'user';
+
     await _dio.post<dynamic>(
       Endpoint.register,
-      data: {'name': name, 'email': email, 'password': password, 'role': role},
+      data: {
+        'name': name,
+        'email': email,
+        'password': password,
+        'role': defaultRole,
+      },
     );
 
     final loginResponse = await _dio.post<dynamic>(
@@ -40,14 +47,24 @@ class RegisterServiceImpl implements RegisterService {
       data: {'email': email, 'password': password},
     );
 
-    final loginData = loginResponse.data;
-    if (loginData is! Map<String, dynamic>) {
-      throw const FormatException('Invalid login response after register');
+    final envelope = ApiEnvelope.fromDynamic<Map<String, dynamic>>(
+      loginResponse.data,
+      dataParser: (data) {
+        if (data is Map<String, dynamic>) {
+          return data;
+        }
+        throw const FormatException('Invalid login response after register');
+      },
+    );
+
+    if (!envelope.isSuccess) {
+      throw FormatException(envelope.message);
     }
 
-    final token = loginData['token']?.toString() ?? '';
-    final userJson =
-        loginData['user_data'] ?? loginData['data'] ?? loginData['user'];
+    final token = envelope.data['token']?.toString() ?? '';
+    final userJson = envelope.data['user_data'] ?? envelope.data['data'] ??
+        envelope.data['user'];
+
     if (token.isEmpty || userJson is! Map<String, dynamic>) {
       throw const FormatException('Invalid login payload after register');
     }

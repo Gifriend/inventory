@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:inventory/core/config/endpoint.dart';
+import 'package:inventory/core/data_sources/network/api_envelope.dart';
 import 'package:inventory/core/data_sources/network/dio_client.dart';
 import 'package:inventory/core/models/loan_model.dart';
 
@@ -11,9 +11,10 @@ final loanRepositoryProvider = Provider<LoanRepository>(
 
 abstract class LoanRepository {
   Future<List<LoanModel>> getLoans();
+  Future<List<LoanModel>> getLoanHistory();
 
   Future<void> createLoan({
-    PlatformFile? pdfFile,
+    String? pdfFilePath,
     required DateTime startTime,
     required DateTime endTime,
   });
@@ -39,54 +40,36 @@ class LoanRepositoryImpl implements LoanRepository {
   @override
   Future<List<LoanModel>> getLoans() async {
     final response = await _dio.get<dynamic>(Endpoint.loans);
-    final data = response.data;
-    // Support multiple possible response shapes:
-    // - { "data": [ ... ] }
-    // - [ ... ]
-    // - any other -> return empty list instead of throwing
-    if (data is List) {
-      return data
-          .whereType<Map>()
-          .map((e) => LoanModel.fromJson(Map<String, dynamic>.from(e)))
-          .toList();
-    }
+    return _parseLoanModels(response.data);
+  }
 
-    if (data is Map<String, dynamic>) {
-      final list = data['data'];
-      if (list is List) {
-        return list
-            .whereType<Map>()
-            .map((e) => LoanModel.fromJson(Map<String, dynamic>.from(e)))
-            .toList();
-      }
-      return [];
-    }
-
-    return [];
+  @override
+  Future<List<LoanModel>> getLoanHistory() async {
+    final response = await _dio.get<dynamic>('${Endpoint.loans}/history');
+    return _parseLoanModels(response.data);
   }
 
   @override
   Future<void> createLoan({
-    PlatformFile? pdfFile,
+    String? pdfFilePath,
     required DateTime startTime,
     required DateTime endTime,
   }) async {
-    final Map<String, dynamic> data = {
+    final Map<String, dynamic> body = {
       'start_time': startTime.toIso8601String(),
       'end_time': endTime.toIso8601String(),
     };
 
-    if (pdfFile != null && pdfFile.path != null) {
+    if (pdfFilePath != null && pdfFilePath.isNotEmpty) {
       final multipartFile = await MultipartFile.fromFile(
-        pdfFile.path!,
-        filename: pdfFile.name,
+        pdfFilePath,
+        filename: pdfFilePath.split('/').last,
         contentType: DioMediaType('application', 'pdf'),
       );
-      data['pdf_file'] = multipartFile;
+      body['pdf_file'] = multipartFile;
     }
 
-    final formData = FormData.fromMap(data);
-
+    final formData = FormData.fromMap(body);
     await _dio.post<dynamic>(Endpoint.loans, data: formData);
   }
 
@@ -121,5 +104,37 @@ class LoanRepositoryImpl implements LoanRepository {
   @override
   Future<void> checkOut() async {
     await _dio.post<dynamic>(Endpoint.checkOut);
+  }
+
+  static List<LoanModel> _parseLoanModels(dynamic raw) {
+    final envelope = ApiEnvelope.fromDynamic<List<LoanModel>>(
+      raw,
+      dataParser: (data) {
+        if (data is List) {
+          return data
+              .whereType<Map>()
+              .map((item) => LoanModel.fromJson(Map<String, dynamic>.from(item)))
+              .toList(growable: false);
+        }
+
+        if (data is Map<String, dynamic>) {
+          final dataList = data['data'];
+          if (dataList is List) {
+            return dataList
+                .whereType<Map>()
+                .map((item) => LoanModel.fromJson(Map<String, dynamic>.from(item)))
+                .toList(growable: false);
+          }
+        }
+
+        throw const FormatException('Invalid loan payload');
+      },
+    );
+
+    if (!envelope.isSuccess) {
+      throw FormatException(envelope.message);
+    }
+
+    return envelope.data;
   }
 }

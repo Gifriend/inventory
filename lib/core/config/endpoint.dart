@@ -20,4 +20,5 @@ class Endpoint {
   static String roomDesks(int roomId) => '/rooms/$roomId/desks';
   static String roomAvailableDesks(int roomId) =>
       '/rooms/$roomId/available-desks';
+  static String deskQr(int deskId) => '/desks/$deskId/qr';
 }

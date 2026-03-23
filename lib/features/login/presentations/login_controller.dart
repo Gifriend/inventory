@@ -4,9 +4,8 @@ import 'package:inventory/core/data_sources/local/hive_service.dart';
 import 'package:inventory/core/data_sources/local/secure_storage_service.dart';
 import 'package:inventory/core/models/models.dart';
 import 'package:inventory/core/utils/dio_error_mapper.dart';
-import 'package:inventory/features/login/data/repositories/login_repository.dart';
+import 'package:inventory/features/login/data/services/auth_service.dart';
 import 'package:inventory/features/login/presentations/login_state.dart';
-import 'package:inventory/features/register/data/repositories/register_repository.dart';
 
 final loginControllerProvider = NotifierProvider<LoginController, LoginState>(
   LoginController.new,
@@ -83,7 +82,7 @@ class LoginController extends Notifier<LoginState> {
     try {
       debugPrint('[login] attempting login for $email');
       final result = await ref
-          .read(loginRepositoryProvider)
+          .read(authServiceProvider)
           .login(email: email, password: password);
       await ref.read(secureStorageServiceProvider).saveToken(result.token);
       await ref.read(hiveServiceProvider).saveUser(result.user);
@@ -116,9 +115,12 @@ class LoginController extends Notifier<LoginState> {
     );
     try {
       debugPrint('[login] attempting register for $email role=$role');
-      final result = await ref
-          .read(registerRepositoryProvider)
-          .register(name: name, email: email, password: password, role: role);
+      final result = await ref.read(authServiceProvider).register(
+            name: name,
+            email: email,
+            password: password,
+            role: role,
+          );
       await ref.read(secureStorageServiceProvider).saveToken(result.token);
       await ref.read(hiveServiceProvider).saveUser(result.user);
       state = state.copyWith(

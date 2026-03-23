@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:inventory/core/config/endpoint.dart';
+import 'package:inventory/core/data_sources/network/api_envelope.dart';
 import 'package:inventory/core/data_sources/network/dio_client.dart';
 import 'package:inventory/core/models/desk_model.dart';
 import 'package:inventory/core/models/room_model.dart';
@@ -13,6 +14,10 @@ abstract class RoomRepository {
   Future<List<RoomModel>> getAllRooms();
 
   Future<List<DeskModel>> getRoomDesks(int roomId);
+
+  Future<List<DeskModel>> getAvailableDesk(int roomId);
+
+  Future<String> getDeskQrPayload(int deskId);
 }
 
 class RoomRepositoryImpl implements RoomRepository {
@@ -23,38 +28,92 @@ class RoomRepositoryImpl implements RoomRepository {
   @override
   Future<List<RoomModel>> getAllRooms() async {
     final response = await _dio.get<dynamic>(Endpoint.rooms);
-    final data = response.data;
-    if (data is! Map<String, dynamic>) {
-      throw const FormatException('Invalid rooms response');
-    }
 
-    final roomsData = data['data'];
-    if (roomsData is! List) {
-      return [];
-    }
-
-    return roomsData
-        .whereType<Map>()
-        .map((e) => RoomModel.fromJson(Map<String, dynamic>.from(e)))
-        .toList();
+    return _parseList<RoomModel>(
+      response.data,
+      (item) => RoomModel.fromJson(Map<String, dynamic>.from(item as Map)),
+    );
   }
 
   @override
   Future<List<DeskModel>> getRoomDesks(int roomId) async {
     final response = await _dio.get<dynamic>(Endpoint.roomDesks(roomId));
-    final data = response.data;
-    if (data is! Map<String, dynamic>) {
-      throw const FormatException('Invalid desks response');
+
+    return _parseList<DeskModel>(
+      response.data,
+      (item) => DeskModel.fromJson(Map<String, dynamic>.from(item as Map)),
+    );
+  }
+
+  @override
+  Future<List<DeskModel>> getAvailableDesk(int roomId) async {
+    final response =
+        await _dio.get<dynamic>(Endpoint.roomAvailableDesks(roomId));
+
+    return _parseList<DeskModel>(
+      response.data,
+      (item) => DeskModel.fromJson(Map<String, dynamic>.from(item as Map)),
+    );
+  }
+
+  @override
+  Future<String> getDeskQrPayload(int deskId) async {
+    final response = await _dio.get<dynamic>(Endpoint.deskQr(deskId));
+
+    final envelope = ApiEnvelope.fromDynamic<Map<String, dynamic>>(
+      response.data,
+      dataParser: (data) {
+        if (data is Map<String, dynamic>) {
+          return data;
+        }
+        throw const FormatException('Invalid desk QR payload');
+      },
+    );
+
+    if (!envelope.isSuccess) {
+      throw FormatException(envelope.message);
     }
 
-    final desksData = data['data'];
-    if (desksData is! List) {
-      return [];
+    final payload = envelope.data['qr_payload']?.toString();
+    if (payload == null || payload.isEmpty) {
+      throw const FormatException('QR payload not available');
     }
 
-    return desksData
-        .whereType<Map>()
-        .map((e) => DeskModel.fromJson(Map<String, dynamic>.from(e)))
-        .toList();
+    return payload;
+  }
+
+  static List<T> _parseList<T>(
+    dynamic raw,
+    T Function(Object data) parser,
+  ) {
+    final envelope = ApiEnvelope.fromDynamic<List<T>>(
+      raw,
+      dataParser: (data) {
+        if (data is List) {
+          return data
+              .whereType<Map>()
+              .map((item) => parser(item))
+              .toList(growable: false);
+        }
+
+        if (data is Map<String, dynamic>) {
+          final maybeList = data['data'];
+          if (maybeList is List) {
+            return maybeList
+                .whereType<Map>()
+                .map((item) => parser(item))
+                .toList(growable: false);
+          }
+        }
+
+        throw const FormatException('Invalid list payload');
+      },
+    );
+
+    if (!envelope.isSuccess) {
+      throw FormatException(envelope.message);
+    }
+
+    return envelope.data;
   }
 }

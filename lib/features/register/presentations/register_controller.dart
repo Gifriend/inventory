@@ -4,8 +4,8 @@ import 'package:inventory/core/constants/constants.dart';
 import 'package:inventory/core/data_sources/local/hive_service.dart';
 import 'package:inventory/core/data_sources/local/secure_storage_service.dart';
 import 'package:inventory/core/utils/dio_error_mapper.dart';
+import 'package:inventory/features/login/data/services/auth_service.dart';
 import 'package:inventory/features/login/presentations/login_controller.dart';
-import 'package:inventory/features/register/data/repositories/register_repository.dart';
 import 'package:inventory/features/register/presentations/register_state.dart';
 
 final registerControllerProvider =
@@ -71,9 +71,12 @@ class RegisterController extends Notifier<RegisterState> {
     );
     try {
       debugPrint('[register] attempting register for $email');
-      final result = await ref
-          .read(registerRepositoryProvider)
-          .register(name: name, email: email, password: password, role: 'User');
+      final result = await ref.read(authServiceProvider).register(
+            name: name,
+            email: email,
+            password: password,
+            role: 'user',
+          );
       await ref.read(secureStorageServiceProvider).saveToken(result.token);
       await ref.read(hiveServiceProvider).saveUser(result.user);
 
