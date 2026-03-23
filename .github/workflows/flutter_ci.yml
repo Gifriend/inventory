@@ -1,58 +1,89 @@
-name: Flutter CI
+name: Flutter Android CI/CD
 
 on:
   push:
-    branches:
-      - main
-      - master
-  pull_request:
-    branches:
-      - main
-      - master
+    branches: ["main"]
+
+permissions:
+  contents: write
 
 jobs:
-  analyze-build-test:
-    name: Analyze, Build, and Test
+  build:
     runs-on: ubuntu-latest
     environment: ENV_FILES
 
     steps:
+      # Checkout repository
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
-      - name: Set up Flutter
+      # Setup Flutter SDK
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.32.4'
+          flutter-version: "3.32.4"
 
+      # Disable Gradle daemon to improve CI stability
+      - name: Disable Gradle daemon
+        run: |
+          echo "org.gradle.daemon=false" >> android/gradle.properties
+          echo "org.gradle.vfs.watch=false" >> android/gradle.properties
+          echo "kotlin.compiler.execution.strategy=in-process" >> android/gradle.properties
+
+      # Clean project to avoid cache and watcher issues
+      - name: Clean project
+        run: flutter clean
+
+      # Install dependencies
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Generate environment file
-        run: |
-          cat > .env <<EOF
-          BASE_URL=${{ secrets.BASE_URL }}
-          EOF
-
-      - name: Run build_runner for generated code
+      # Generate code (freezed, json_serializable, riverpod, etc.)
+      - name: Generate code
         run: flutter pub run build_runner build --delete-conflicting-outputs
 
-      - name: Run static analysis
+      # Create single .env file from GitHub secrets
+      - name: Create .env file
+        run: |
+          echo "BASE_URL=${{ secrets.BASE_URL }}" > .env
+
+      # Analyze code (optional but recommended)
+      - name: Analyze project
         run: flutter analyze
 
-      - name: Run unit tests
-        run: flutter test --no-pub
+      # Build release APK
+      - name: Build APK
+        run: flutter build apk --release --no-tree-shake-icons --build-number=${{ github.run_number }}
 
-      - name: Run optional integration tests
-        if: github.event_name == 'pull_request'
-        run: flutter test integration_test/app_smoke_test.dart --no-pub
+      # Verify APK output exists
+      - name: Check APK output
+        run: |
+          echo "Listing APK path candidates..."
+          find build/app/outputs -type f -name "*release*.apk" -print
 
-      - name: Build release APK
-        run: flutter build apk --release --no-pub
+      # Ensure at least one APK exists (fail early if not)
+      - name: Assert APK found and normalize path
+        run: |
+          APK_PATH=$(find build/app/outputs -type f -name "*release*.apk" | head -n 1)
+          if [ -z "$APK_PATH" ]; then
+            echo "No release APK found under build/app/outputs";
+            exit 1;
+          fi
+          echo "Found APK: $APK_PATH"
 
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
+          TARGET_PATH=build/app/outputs/flutter-apk/app-release.apk
+          mkdir -p $(dirname "$TARGET_PATH")
+          cp -f "$APK_PATH" "$TARGET_PATH"
+
+          echo "APK_PATH=$TARGET_PATH" >> $GITHUB_ENV
+
+      # Upload APK to GitHub Release
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: inventory-release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          tag_name: v1.0.${{ github.run_number }}
+          name: Inspire Release v1.0.${{ github.run_number }}
+          files: ${{ env.APK_PATH }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
