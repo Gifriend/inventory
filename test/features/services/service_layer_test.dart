@@ -36,7 +36,6 @@ class FakeRegisterRepository implements RegisterRepository {
     required String name,
     required String email,
     required String password,
-    required String role,
   }) async {
     registerInvoked = true;
     return (
@@ -157,7 +156,6 @@ void main() {
         name: 'test',
         email: 'x@y.com',
         password: 'pass',
-        role: 'user',
       );
 
       expect(registerRepository.registerInvoked, isTrue);

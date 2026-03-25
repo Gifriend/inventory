@@ -9,3 +9,13 @@ watch:
 clean:
   - flutter clean
   - dart pub get  
+release-apk:
+  - flutter build apk --release --split-per-abi
+release-apk-universal:
+  - flutter build apk --release
+release-apk-split:
+  - flutter build apk --release --split-per-abi
+release-apk-arm64:
+  - flutter build apk --release --target-platform android-arm64
+release-aab:
+  - flutter build appbundle --release

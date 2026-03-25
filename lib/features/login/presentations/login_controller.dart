@@ -107,19 +107,17 @@ class LoginController extends Notifier<LoginState> {
     required String name,
     required String email,
     required String password,
-    required String role,
   }) async {
     state = state.copyWith(
       status: LoginSubmitStatus.loading,
       errorMessage: null,
     );
     try {
-      debugPrint('[login] attempting register for $email role=$role');
+      debugPrint('[login] attempting register for $email with default role user');
       final result = await ref.read(authServiceProvider).register(
             name: name,
             email: email,
             password: password,
-            role: role,
           );
       await ref.read(secureStorageServiceProvider).saveToken(result.token);
       await ref.read(hiveServiceProvider).saveUser(result.user);

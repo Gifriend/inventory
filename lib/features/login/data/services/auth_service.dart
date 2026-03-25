@@ -20,7 +20,6 @@ abstract class AuthService {
     required String name,
     required String email,
     required String password,
-    required String role,
   });
 }
 
@@ -43,13 +42,11 @@ class AuthServiceImpl implements AuthService {
     required String name,
     required String email,
     required String password,
-    required String role,
   }) async {
     return _registerRepository.register(
       name: name,
       email: email,
       password: password,
-      role: role,
     );
   }
 }

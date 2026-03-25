@@ -45,10 +45,15 @@ class LoginServiceImpl implements LoginService {
       throw FormatException(envelope.message);
     }
 
-    final token = envelope.data['token']?.toString() ?? '';
-    final userJson = envelope.data['user_data'] ??
-        envelope.data['data'] ??
-        envelope.data['user'];
+    return _parseAuthData(envelope.data);
+  }
+
+  static ({String token, UserModel user}) _parseAuthData(
+    Map<String, dynamic> payload,
+  ) {
+    final token = payload['token']?.toString() ?? '';
+    final userJson =
+        payload['user_data'] ?? payload['user'] ?? payload['data'];
 
     if (token.isEmpty || userJson is! Map<String, dynamic>) {
       throw const FormatException('Invalid login data');

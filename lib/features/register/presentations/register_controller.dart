@@ -75,7 +75,6 @@ class RegisterController extends Notifier<RegisterState> {
             name: name,
             email: email,
             password: password,
-            role: 'user',
           );
       await ref.read(secureStorageServiceProvider).saveToken(result.token);
       await ref.read(hiveServiceProvider).saveUser(result.user);

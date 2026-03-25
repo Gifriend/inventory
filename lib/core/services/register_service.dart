@@ -14,7 +14,6 @@ abstract class RegisterService {
     required String name,
     required String email,
     required String password,
-    required String role,
   });
 }
 
@@ -28,17 +27,14 @@ class RegisterServiceImpl implements RegisterService {
     required String name,
     required String email,
     required String password,
-    required String role,
   }) async {
-    const defaultRole = 'user';
-
     await _dio.post<dynamic>(
       Endpoint.register,
       data: {
         'name': name,
         'email': email,
         'password': password,
-        'role': defaultRole,
+        'role': 'user',
       },
     );
 
@@ -61,9 +57,15 @@ class RegisterServiceImpl implements RegisterService {
       throw FormatException(envelope.message);
     }
 
-    final token = envelope.data['token']?.toString() ?? '';
-    final userJson = envelope.data['user_data'] ?? envelope.data['data'] ??
-        envelope.data['user'];
+    return _parseAuthData(envelope.data);
+  }
+
+  static ({String token, UserModel user}) _parseAuthData(
+    Map<String, dynamic> payload,
+  ) {
+    final token = payload['token']?.toString() ?? '';
+    final userJson =
+        payload['user_data'] ?? payload['user'] ?? payload['data'];
 
     if (token.isEmpty || userJson is! Map<String, dynamic>) {
       throw const FormatException('Invalid login payload after register');

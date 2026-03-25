@@ -11,7 +11,6 @@ abstract class RegisterRepository {
     required String name,
     required String email,
     required String password,
-    required String role,
   });
 }
 
@@ -25,13 +24,11 @@ class RegisterRepositoryImpl implements RegisterRepository {
     required String name,
     required String email,
     required String password,
-    required String role,
   }) {
     return _service.register(
       name: name,
       email: email,
       password: password,
-      role: role,
     );
   }
 }

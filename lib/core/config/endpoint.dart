@@ -2,9 +2,15 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Endpoint {
   static String get baseUrl {
-    final raw = (dotenv.env['BASE_URL'] ?? '').trim();
-    if (raw.isEmpty) return '';
-    return raw.endsWith('/api') ? raw : '$raw/api';
+    final configured = (dotenv.env['BASE_URL'] ?? '').trim();
+    if (configured.isEmpty) {
+      return '';
+    }
+
+    final normalized = configured.replaceFirst(RegExp(r'/+$'), '');
+    final hasApiPrefix =
+        normalized.endsWith('/api') || normalized.contains('/api/');
+    return hasApiPrefix ? normalized : '$normalized/api';
   }
 
   static const String register = '/register';
