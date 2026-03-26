@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:inventory/core/assets/assets.dart';
 import 'package:inventory/core/widgets/widgets.dart';
-import 'package:inventory/core/utils/dio_error_mapper.dart';
 import 'package:inventory/features/desk/presentations/desk_controller.dart';
 import 'package:inventory/features/loan/presentations/loan_controller.dart';
 import 'package:inventory/core/constants/constants.dart';
-
+import 'package:inventory/core/utils/dio_error_mapper.dart';
+import 'package:go_router/go_router.dart';
 
 class LoanRequestScreen extends ConsumerStatefulWidget {
   const LoanRequestScreen({super.key});
@@ -26,29 +26,36 @@ class _LoanRequestScreenState extends ConsumerState<LoanRequestScreen> {
     final selectedDesk = ref.watch(selectedDeskProvider);
     final actionState = ref.watch(loanActionControllerProvider);
 
-    ref.listen<AsyncValue<void>>(loanActionControllerProvider, (
-      previous,
-      next,
-    ) {
+    ref.listen<AsyncValue<void>>(loanActionControllerProvider, (previous, next) {
       next.whenOrNull(
-        data: (_) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Loan request submitted')),
+        data: (_) async {
+          if (!context.mounted) return;
+          await showDialog<void>(
+            context: context,
+            barrierDismissible: false,
+            builder: (ctx) => AlertDialog(
+              title: const Text('Permintaan Dikirim'),
+              content:
+                  const Text('Permintaan peminjaman berhasil diajukan.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                  },
+                  child: const Text('Oke'),
+                ),
+              ],
+            ),
           );
-          Navigator.of(context).pop();
+
+          if (!context.mounted) return;
+          context.go('/user');
         },
         error: (error, stack) {
-          // Log full error info to console so it appears in debugger logs
-          debugPrint('LoanRequestScreen error (${error.runtimeType}): ${error.toString()}');
-          debugPrint(mapDioErrorToMessage(error));
-          // print stack trace (if available)
-          debugPrintStack(stackTrace: stack as StackTrace?);
-          // also report to Flutter error handler so it shows in IDE consoles
-          FlutterError.reportError(FlutterErrorDetails(exception: error, stack: stack as StackTrace?));
-
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(mapDioErrorToMessage(error))));
+          if (!context.mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(mapDioErrorToMessage(error))),
+          );
         },
       );
     });
@@ -58,7 +65,7 @@ class _LoanRequestScreenState extends ConsumerState<LoanRequestScreen> {
       appBar: AppBarWidget(
         title: 'Ajukan Peminjaman',
         leadIcon: Assets.icons.fill.arrowBack,
-        onPressedLeadIcon: () => Navigator.of(context).pop(),
+        onPressedLeadIcon: () => context.pop(),
       ),
       child: ListView(
         padding: EdgeInsets.symmetric(
@@ -68,8 +75,8 @@ class _LoanRequestScreenState extends ConsumerState<LoanRequestScreen> {
         children: [
           Text(
             selectedDesk == null
-                ? 'Tidak ada desk yang dipilih'
-                : 'Desk: ${selectedDesk.deskNumber}',
+                ? 'Tidak ada meja yang dipilih'
+                : 'Meja: ${selectedDesk.deskNumber}',
             style: BaseTypography.titleMedium,
           ),
           Gap.h16,

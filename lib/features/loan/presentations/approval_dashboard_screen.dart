@@ -10,6 +10,30 @@ import 'package:inventory/core/constants/constants.dart';
 class ApprovalDashboardScreen extends ConsumerWidget {
   const ApprovalDashboardScreen({super.key});
 
+  Future<bool> _confirmApprove(BuildContext context, int loanId) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Konfirmasi Approve'),
+        content: Text(
+          'Lanjutkan proses persetujuan untuk request #$loanId?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Batal'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Lanjutkan'),
+          ),
+        ],
+      ),
+    );
+
+    return confirmed ?? false;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final loansAsync = ref.watch(loansProvider);
@@ -109,6 +133,15 @@ class ApprovalDashboardScreen extends ConsumerWidget {
                               onTap: actionState.isLoading
                                   ? null
                                   : () async {
+                                      final approveConfirmed =
+                                          await _confirmApprove(
+                                            context,
+                                            loan.id,
+                                          );
+                                      if (!context.mounted || !approveConfirmed) {
+                                        return;
+                                      }
+
                                       final result =
                                           await showDialog<Map<String, int>>(
                                             context: context,
@@ -148,12 +181,12 @@ class ApprovalDashboardScreen extends ConsumerWidget {
                                       final confirmed = await showDialog<bool>(
                                         context: context,
                                         builder: (context) => AlertDialog(
-                                          title: const Text('Reject Request'),
+                                          title: const Text('Konfirmasi Reject'),
                                           content: TextField(
                                             controller: notesController,
-                                            decoration: const InputDecoration(
+                                            decoration: InputDecoration(
                                               hintText:
-                                                  'Reason for rejection (optional)',
+                                                  'Alasan penolakan (opsional)',
                                               border: OutlineInputBorder(),
                                             ),
                                             maxLines: 3,
@@ -162,12 +195,12 @@ class ApprovalDashboardScreen extends ConsumerWidget {
                                             TextButton(
                                               onPressed: () =>
                                                   Navigator.pop(context, false),
-                                              child: const Text('Cancel'),
+                                              child: const Text('Batal'),
                                             ),
                                             ElevatedButton(
                                               onPressed: () =>
                                                   Navigator.pop(context, true),
-                                              child: const Text('Reject'),
+                                              child: const Text('Tolak'),
                                             ),
                                           ],
                                         ),

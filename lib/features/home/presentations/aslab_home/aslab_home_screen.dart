@@ -10,6 +10,28 @@ import 'package:inventory/features/login/application.dart';
 class AslabHomeScreen extends ConsumerWidget {
   const AslabHomeScreen({super.key});
 
+  Future<bool> _confirmLogout(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Konfirmasi Logout'),
+        content: const Text('Apakah Anda yakin ingin keluar dari aplikasi?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Batal'),
+          ),
+          ElevatedButton(
+            onPressed: () => context.pushNamed(AppRoute.login),
+            child: const Text('Logout'),
+          ),
+        ],
+      ),
+    );
+
+    return confirmed ?? false;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(loginControllerProvider).user;
@@ -20,8 +42,11 @@ class AslabHomeScreen extends ConsumerWidget {
         title: 'Dashboard Aslab',
         trailIcon: Assets.svg.logOut,
         trailIconColor: BaseColor.white,
-        onPressedTrailIcon: () =>
-            ref.read(loginControllerProvider.notifier).logout(),
+        onPressedTrailIcon: () async {
+          final confirmed = await _confirmLogout(context);
+          if (!context.mounted || !confirmed) return;
+          await ref.read(loginControllerProvider.notifier).logout();
+        },
       ),
       child: ListView(
         padding: EdgeInsets.symmetric(

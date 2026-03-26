@@ -106,10 +106,7 @@ class DeskSelectionScreen extends ConsumerWidget {
                         return InkWell(
                           onTap: !isAvailable
                               ? null
-                              : () {
-                                  ref
-                                      .read(selectedDeskProvider.notifier)
-                                      .setDesk(desk);
+                              : () async {
                                   context.pushNamed(AppRoute.loanRequest);
                                 },
                           child: AnimatedContainer(

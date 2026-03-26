@@ -40,7 +40,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           previous?.status != RegisterSubmitStatus.success &&
           next.status == RegisterSubmitStatus.success;
       if (didRegister && next.user != null) {
-        _showMessage('Register berhasil, masuk otomatis.');
         final role = (next.user!.role ?? 'user').toLowerCase();
         final targetPath = role == 'aslab' ? '/aslab' : '/user';
         context.go(targetPath);
