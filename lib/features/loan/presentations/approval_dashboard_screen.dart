@@ -70,24 +70,32 @@ class ApprovalDashboardScreen extends ConsumerWidget {
         leadIcon: Assets.icons.fill.arrowBack,
         onPressedLeadIcon: () => Navigator.of(context).pop(),
       ),
-      child: loansAsync.when(
-        data: (loans) {
-          final pending = loans
-              .where((loan) => loan.status == 'pending')
-              .toList();
-          if (pending.isEmpty) {
-            return const EmptyStateWidget(
-              icon: Icons.hourglass_empty,
-              title: 'Tidak ada permintaan pending',
-              subtitle: 'Semua peminjaman telah diproses.',
-            );
+      child: RefreshIndicator(
+        onRefresh: () async {
+          final fetchedLoans = await ref.refresh(loansProvider.future);
+          if (fetchedLoans.isEmpty) {
+            // no-op on empty, this avoids unused variable lint
           }
+        },
+        child: loansAsync.when(
+          data: (loans) {
+            final pending = loans
+                .where((loan) => loan.status == 'pending')
+                .toList();
+            if (pending.isEmpty) {
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: const [
+                  EmptyStateWidget(
+                    icon: Icons.hourglass_empty,
+                    title: 'Tidak ada permintaan pending',
+                    subtitle: 'Semua peminjaman telah diproses.',
+                  ),
+                ],
+              );
+            }
 
-          return RefreshIndicator(
-            onRefresh: () async {
-              final _ = await ref.refresh(loansProvider.future);
-            },
-            child: ListView.separated(
+            return ListView.separated(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: EdgeInsets.symmetric(
                 horizontal: BaseSize.w16,
@@ -98,145 +106,168 @@ class ApprovalDashboardScreen extends ConsumerWidget {
               itemBuilder: (context, index) {
                 final loan = pending[index];
 
-              return Container(
-                decoration: BoxDecoration(
-                  color: BaseColor.white,
-                  borderRadius: BorderRadius.circular(BaseSize.radiusMd),
-                  boxShadow: BaseShadow.shadow,
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(BaseSize.w12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Request #${loan.id}',
-                        style: BaseTypography.titleMedium.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      Gap.h8,
-                      Text(
-                        'User: ${loan.user?.name ?? '-'}',
-                        style: BaseTypography.titleSmall,
-                      ),
-                      Text(
-                        'Schedule: ${loan.startTime ?? '-'} - ${loan.endTime ?? '-'}',
-                        style: BaseTypography.titleSmall,
-                      ),
-                      Gap.h16,
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ButtonWidget.primary(
-                              text: 'Approve',
-                              onTap: actionState.isLoading
-                                  ? null
-                                  : () async {
-                                      final approveConfirmed =
-                                          await _confirmApprove(
-                                            context,
-                                            loan.id,
-                                          );
-                                      if (!context.mounted || !approveConfirmed) {
-                                        return;
-                                      }
-
-                                      final result =
-                                          await showDialog<Map<String, int>>(
-                                            context: context,
-                                            builder: (context) =>
-                                                ApproveAssignmentDialog(
-                                                  loanId: loan.id,
-                                                  onAssignmentSelected: () {},
-                                                ),
-                                          );
-
-                                      if (result != null && context.mounted) {
-                                        await ref
-                                            .read(
-                                              loanActionControllerProvider
-                                                  .notifier,
-                                            )
-                                            .approveLoan(
-                                              loanId: loan.id,
-                                              roomId: result['roomId']!,
-                                              deskId: result['deskId']!,
-                                            );
-                                      }
-                                    },
-                            ),
-                          ),
-                          Gap.w12,
-                          Expanded(
-                            child: ButtonWidget.outlined(
-                              text: 'Reject',
-                              onTap: actionState.isLoading
-                                  ? null
-                                  : () async {
-                                      final notesController =
-                                          TextEditingController();
-                                      if (!context.mounted) return;
-
-                                      final confirmed = await showDialog<bool>(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                          title: const Text('Konfirmasi Reject'),
-                                          content: TextField(
-                                            controller: notesController,
-                                            decoration: InputDecoration(
-                                              hintText:
-                                                  'Alasan penolakan (opsional)',
-                                              border: OutlineInputBorder(),
-                                            ),
-                                            maxLines: 3,
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context, false),
-                                              child: const Text('Batal'),
-                                            ),
-                                            ElevatedButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context, true),
-                                              child: const Text('Tolak'),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-
-                                      if (confirmed == true &&
-                                          context.mounted) {
-                                        await ref
-                                            .read(
-                                              loanActionControllerProvider
-                                                  .notifier,
-                                            )
-                                            .rejectLoan(
-                                              loanId: loan.id,
-                                              notes:
-                                                  notesController.text.isEmpty
-                                                  ? 'Rejected by admin'
-                                                  : notesController.text,
-                                            );
-                                      }
-                                      notesController.dispose();
-                                    },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                return Container(
+                  decoration: BoxDecoration(
+                    color: BaseColor.white,
+                    borderRadius: BorderRadius.circular(BaseSize.radiusMd),
+                    boxShadow: BaseShadow.shadow,
                   ),
-                ),
-              );
+                  child: Padding(
+                    padding: EdgeInsets.all(BaseSize.w12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Request #${loan.id}',
+                          style: BaseTypography.titleMedium.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Gap.h8,
+                        Text(
+                          'User: ${loan.user?.name ?? '-'}',
+                          style: BaseTypography.titleSmall,
+                        ),
+                        Text(
+                          'Schedule: ${loan.startTime ?? '-'} - ${loan.endTime ?? '-'}',
+                          style: BaseTypography.titleSmall,
+                        ),
+                        Gap.h16,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ButtonWidget.primary(
+                                text: 'Approve',
+                                onTap: actionState.isLoading
+                                    ? null
+                                    : () async {
+                                        final approveConfirmed =
+                                            await _confirmApprove(
+                                          context,
+                                          loan.id,
+                                        );
+                                        if (!context.mounted || !approveConfirmed) {
+                                          return;
+                                        }
+
+                                        final result =
+                                            await showDialog<Map<String, int>>(
+                                          context: context,
+                                          builder: (context) =>
+                                              ApproveAssignmentDialog(
+                                            loanId: loan.id,
+                                            onAssignmentSelected: () {},
+                                          ),
+                                        );
+
+                                        if (result != null && context.mounted) {
+                                          await ref
+                                              .read(
+                                                loanActionControllerProvider
+                                                    .notifier,
+                                              )
+                                              .approveLoan(
+                                                loanId: loan.id,
+                                                roomId: result['roomId']!,
+                                                deskId: result['deskId']!,
+                                              );
+                                        }
+                                      },
+                              ),
+                            ),
+                            Gap.w12,
+                            Expanded(
+                              child: ButtonWidget.outlined(
+                                text: 'Reject',
+                                onTap: actionState.isLoading
+                                    ? null
+                                    : () async {
+                                        final notesController =
+                                            TextEditingController();
+                                        if (!context.mounted) return;
+
+                                        final confirmed = await showDialog<bool>(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: const Text('Konfirmasi Reject'),
+                                            content: TextField(
+                                              controller: notesController,
+                                              decoration: InputDecoration(
+                                                hintText:
+                                                    'Alasan penolakan (opsional)',
+                                                border: OutlineInputBorder(),
+                                              ),
+                                              maxLines: 3,
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.pop(context, false),
+                                                child: const Text('Batal'),
+                                              ),
+                                              ElevatedButton(
+                                                onPressed: () =>
+                                                    Navigator.pop(context, true),
+                                                child: const Text('Tolak'),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+
+                                        if (confirmed == true && context.mounted) {
+                                          await ref
+                                              .read(
+                                                loanActionControllerProvider
+                                                    .notifier,
+                                              )
+                                              .rejectLoan(
+                                                loanId: loan.id,
+                                                notes: notesController
+                                                        .text.isEmpty
+                                                    ? 'Rejected by admin'
+                                                    : notesController.text,
+                                              );
+                                        }
+                                        notesController.dispose();
+                                      },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
               },
-            ),
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text(mapDioErrorToMessage(error))),
+            );
+          },
+          loading: () => ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: const [
+              SizedBox(height: 220),
+              Center(child: CircularProgressIndicator()),
+            ],
+          ),
+          error: (error, _) => ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: [
+              SizedBox(height: BaseSize.customHeight(160)),
+              Center(child: Text(mapDioErrorToMessage(error))),
+              Gap.h16,
+              Center(
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final refreshed = await ref.refresh(loansProvider.future);
+                    if (refreshed.isEmpty) {
+                      // no-op to satisfy unused variable lint
+                    }
+                  },
+                  child: const Text('Coba lagi'),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

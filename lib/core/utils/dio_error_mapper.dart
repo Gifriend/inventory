@@ -20,9 +20,31 @@ String mapDioErrorToMessage(Object error) {
 
     final responseData = error.response?.data;
     if (responseData is Map<String, dynamic>) {
+      // Prefer explicit message from backend
       final message = responseData['message'];
       if (message is String && message.trim().isNotEmpty) {
         return message;
+      }
+
+      // If API uses envelope {status, message, data}
+      final status = responseData['status'];
+      final data = responseData['data'];
+      if (status is String && status.toLowerCase() == 'success') {
+        if (data == null ||
+            (data is List && data.isEmpty) ||
+            (data is Map && data.isEmpty)) {
+          return 'Data tidak ditemukan.';
+        }
+
+        // success with data set but no explicit message
+        return 'Sukses menerima data.';
+      }
+
+      if (status is String && status.toLowerCase() == 'error') {
+        if (message is String && message.trim().isNotEmpty) {
+          return message;
+        }
+        return 'Terjadi kesalahan pada server.';
       }
 
       final errors = responseData['errors'];
@@ -47,6 +69,10 @@ String mapDioErrorToMessage(Object error) {
     }
 
     final statusCode = error.response?.statusCode;
+    if (statusCode == 200) {
+      // No failure info from server but still reached here
+      return 'Permintaan diterima, namun hasil tidak bisa diproses.';
+    }
     if (statusCode == 401) {
       return 'Email atau password salah.';
     }
