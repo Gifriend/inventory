@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:inventory/core/constants/constants.dart';
 import 'package:inventory/core/widgets/widgets.dart';
+import 'package:inventory/features/splash/presentations/splash_controller.dart';
 
 class SplashScreen extends ConsumerWidget {
   const SplashScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen<AsyncValue<String>>(splashBootstrapProvider, (previous, next) {
+      next.whenData((route) {
+        if (!context.mounted) return;
+        context.go(route);
+      });
+    });
+
+    final bootstrapState = ref.watch(splashBootstrapProvider);
+
     return ScaffoldWidget(
       disablePadding: true,
       child: SafeArea(
@@ -41,7 +52,30 @@ class SplashScreen extends ConsumerWidget {
                     style: BaseTypography.titleSmall,
                   ),
                   Gap.h20,
-                  const CircularProgressIndicator(),
+                  if (bootstrapState.isLoading)
+                    const CircularProgressIndicator()
+                  else
+                    Column(
+                      children: [
+                        const Icon(
+                          Icons.error_outline,
+                          color: BaseColor.red,
+                          size: 28,
+                        ),
+                        Gap.h8,
+                        Text(
+                          'Gagal menyiapkan sesi. Coba lagi.',
+                          style: BaseTypography.titleSmall,
+                        ),
+                        Gap.h8,
+                        TextButton(
+                          onPressed: () {
+                            ref.invalidate(splashBootstrapProvider);
+                          },
+                          child: const Text('Coba Lagi'),
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),

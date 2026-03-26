@@ -59,15 +59,20 @@ class ApprovalDashboardScreen extends ConsumerWidget {
             );
           }
 
-          return ListView.separated(
-            padding: EdgeInsets.symmetric(
-              horizontal: BaseSize.w16,
-              vertical: BaseSize.h16,
-            ),
-            itemCount: pending.length,
-            separatorBuilder: (_, separatorIndex) => Gap.h16,
-            itemBuilder: (context, index) {
-              final loan = pending[index];
+          return RefreshIndicator(
+            onRefresh: () async {
+              final _ = await ref.refresh(loansProvider.future);
+            },
+            child: ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.symmetric(
+                horizontal: BaseSize.w16,
+                vertical: BaseSize.h16,
+              ),
+              itemCount: pending.length,
+              separatorBuilder: (_, separatorIndex) => Gap.h16,
+              itemBuilder: (context, index) {
+                final loan = pending[index];
 
               return Container(
                 decoration: BoxDecoration(
@@ -193,7 +198,8 @@ class ApprovalDashboardScreen extends ConsumerWidget {
                   ),
                 ),
               );
-            },
+              },
+            ),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),

@@ -65,67 +65,93 @@ class DeskSelectionScreen extends ConsumerWidget {
           Expanded(
             child: Padding(
               padding: EdgeInsets.all(BaseSize.w16),
-              child: desksAsync.when(
-                data: (desks) {
-                  if (desks.isEmpty) {
-                    return Center(
-                      child: Text(
-                        'Tidak ada desk di ruangan ini',
-                        style: BaseTypography.titleMedium,
-                      ),
-                    );
-                  }
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  ref.invalidate(allRoomsProvider);
+                  final _ = await ref.refresh(roomDesksProvider.future);
+                },
+                child: desksAsync.when(
+                  data: (desks) {
+                    if (desks.isEmpty) {
+                      return ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        children: [
+                          SizedBox(height: BaseSize.customHeight(220)),
+                          Center(
+                            child: Text(
+                              'Tidak ada desk di ruangan ini',
+                              style: BaseTypography.titleMedium,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
 
-                  return GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                      crossAxisSpacing: BaseSize.w8,
-                      mainAxisSpacing: BaseSize.h8,
-                      childAspectRatio: 1.35,
-                    ),
-                    itemCount: desks.length,
-                    itemBuilder: (context, index) {
-                      final desk = desks[index];
+                    return GridView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4,
+                        crossAxisSpacing: BaseSize.w8,
+                        mainAxisSpacing: BaseSize.h8,
+                        childAspectRatio: 1.35,
+                      ),
+                      itemCount: desks.length,
+                      itemBuilder: (context, index) {
+                        final desk = desks[index];
                         final isAvailable = desk.status == 'available';
                         final tileColor = isAvailable
-                          ? BaseColor.primaryinventory
-                          : BaseColor.grey.shade300;
+                            ? BaseColor.primaryinventory
+                            : BaseColor.grey.shade300;
 
-                      return InkWell(
-                        onTap: !isAvailable
-                            ? null
-                            : () {
-                                ref
-                                    .read(selectedDeskProvider.notifier)
-                                    .setDesk(desk);
-                                context.pushNamed(AppRoute.loanRequest);
-                              },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 220),
-                          decoration: BoxDecoration(
-                            color: tileColor,
-                            borderRadius: BorderRadius.circular(
-                              BaseSize.radiusMd,
+                        return InkWell(
+                          onTap: !isAvailable
+                              ? null
+                              : () {
+                                  ref
+                                      .read(selectedDeskProvider.notifier)
+                                      .setDesk(desk);
+                                  context.pushNamed(AppRoute.loanRequest);
+                                },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 220),
+                            decoration: BoxDecoration(
+                              color: tileColor,
+                              borderRadius: BorderRadius.circular(
+                                BaseSize.radiusMd,
+                              ),
+                              boxShadow: isAvailable ? BaseShadow.shadow : [],
                             ),
-                            boxShadow: isAvailable ? BaseShadow.shadow : [],
-                          ),
-                          child: Center(
-                            child: Text(
-                              desk.deskNumber,
-                              style: BaseTypography.titleMedium.copyWith(
-                                color: isAvailable ? BaseColor.white : BaseColor.grey,
-                                fontWeight: FontWeight.w700,
+                            child: Center(
+                              child: Text(
+                                desk.deskNumber,
+                                style: BaseTypography.titleMedium.copyWith(
+                                  color: isAvailable
+                                      ? BaseColor.white
+                                      : BaseColor.grey,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  );
-                },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, _) =>
-                    Center(child: Text(mapDioErrorToMessage(error))),
+                        );
+                      },
+                    );
+                  },
+                  loading: () => ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: [
+                      SizedBox(height: BaseSize.customHeight(220)),
+                      const Center(child: CircularProgressIndicator()),
+                    ],
+                  ),
+                  error: (error, _) => ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: [
+                      SizedBox(height: BaseSize.customHeight(220)),
+                      Center(child: Text(mapDioErrorToMessage(error))),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),

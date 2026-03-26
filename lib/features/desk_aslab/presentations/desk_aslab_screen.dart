@@ -53,23 +53,56 @@ class AslabDeskQrScreen extends ConsumerWidget {
           Expanded(
             child: Padding(
               padding: EdgeInsets.all(BaseSize.w16),
-              child: desksAsync.when(
-                data: (desks) {
-                  if (desks.isEmpty) return Center(child: Text('Tidak ada meja', style: BaseTypography.titleMedium));
-
-                  return GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                      crossAxisSpacing: BaseSize.w8,
-                      mainAxisSpacing: BaseSize.h8,
-                      childAspectRatio: 0.9,
-                    ),
-                    itemCount: desks.length,
-                    itemBuilder: (context, index) => _DeskQrTile(desk: desks[index]),
-                  );
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  ref.invalidate(allRoomsProvider);
+                  final _ = await ref.refresh(roomDesksProvider.future);
                 },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (e, _) => Center(child: Text(mapDioErrorToMessage(e))),
+                child: desksAsync.when(
+                  data: (desks) {
+                    if (desks.isEmpty) {
+                      return ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        children: [
+                          SizedBox(height: BaseSize.customHeight(220)),
+                          Center(
+                            child: Text(
+                              'Tidak ada meja',
+                              style: BaseTypography.titleMedium,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+
+                    return GridView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4,
+                        crossAxisSpacing: BaseSize.w8,
+                        mainAxisSpacing: BaseSize.h8,
+                        childAspectRatio: 0.9,
+                      ),
+                      itemCount: desks.length,
+                      itemBuilder: (context, index) =>
+                          _DeskQrTile(desk: desks[index]),
+                    );
+                  },
+                  loading: () => ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: [
+                      SizedBox(height: BaseSize.customHeight(220)),
+                      const Center(child: CircularProgressIndicator()),
+                    ],
+                  ),
+                  error: (e, _) => ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: [
+                      SizedBox(height: BaseSize.customHeight(220)),
+                      Center(child: Text(mapDioErrorToMessage(e))),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),

@@ -31,22 +31,27 @@ class MyLoansScreen extends ConsumerWidget {
             );
           }
 
-          return ListView.separated(
-            padding: EdgeInsets.symmetric(
-              horizontal: BaseSize.w16,
-              vertical: BaseSize.h16,
-            ),
-            itemCount: loans.length,
-            separatorBuilder: (_, _) => Gap.h16,
-            itemBuilder: (context, index) {
-              final loan = loans[index];
-              final statusColor = switch (loan.status) {
-                'pending' => BaseColor.grey,
-                'approved' => BaseColor.green,
-                'rejected' => BaseColor.red,
-                'completed' => BaseColor.blue,
-                _ => BaseColor.grey,
-              };
+          return RefreshIndicator(
+            onRefresh: () async {
+              final _ = await ref.refresh(loanHistoryProvider.future);
+            },
+            child: ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.symmetric(
+                horizontal: BaseSize.w16,
+                vertical: BaseSize.h16,
+              ),
+              itemCount: loans.length,
+              separatorBuilder: (_, _) => Gap.h16,
+              itemBuilder: (context, index) {
+                final loan = loans[index];
+                final statusColor = switch (loan.status) {
+                  'pending' => BaseColor.grey,
+                  'approved' => BaseColor.green,
+                  'rejected' => BaseColor.red,
+                  'completed' => BaseColor.blue,
+                  _ => BaseColor.grey,
+                };
 
               return Container(
                 decoration: BoxDecoration(
@@ -135,7 +140,8 @@ class MyLoansScreen extends ConsumerWidget {
                   ),
                 ),
               );
-            },
+              },
+            ),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),

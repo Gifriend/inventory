@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:inventory/core/data_sources/network/auth_session_event.dart';
 import 'package:inventory/features/desk/presentation.dart';
 import 'package:inventory/features/home/presentation.dart';
 import 'package:inventory/features/loan/presentation.dart';
@@ -36,18 +39,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       final location = state.matchedLocation;
       final isGuestRoute = location == '/login' || location == '/register';
 
+      if (location == '/') {
+        return null;
+      }
+
       final user = authState.user;
       final role = (user?.role ?? 'user').toLowerCase();
       final roleHome = role == 'aslab' ? '/aslab' : '/user';
-
-      if (location == '/') {
-        if (user == null) {
-          if (kDebugMode) debugPrint('[router] at root, no user -> /login');
-          return '/login';
-        }
-        if (kDebugMode) debugPrint('[router] at root, user -> $roleHome');
-        return roleHome;
-      }
 
       if (user == null) {
         if (isGuestRoute) return null;
@@ -133,6 +131,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
     ],
   );
+
+  ref.listen<int>(authSessionExpiredEventProvider, (previous, next) {
+    if (previous == next) return;
+
+    unawaited(ref.read(loginControllerProvider.notifier).logout());
+    router.go('/login');
+  });
 
   // ref.listen<LoginState>(loginControllerProvider, (previous, next) {
   //   // final didInitializingChange =
