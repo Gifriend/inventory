@@ -8,7 +8,7 @@ import 'package:inventory/core/widgets/widgets.dart';
 import 'package:inventory/core/utils/dio_error_mapper.dart';
 import 'package:inventory/features/login/application.dart';
 import 'package:inventory/features/loan/presentations/loan_controller.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
 
 class QrScannerScreen extends ConsumerStatefulWidget {
   const QrScannerScreen({super.key});
@@ -19,15 +19,12 @@ class QrScannerScreen extends ConsumerStatefulWidget {
 
 class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
   bool _locked = false;
-
-  // Add controller to manage camera on/off
-  final MobileScannerController _scannerController = MobileScannerController(
-    detectionSpeed: DetectionSpeed.noDuplicates,
-  );
+  final GlobalKey _qrKey = GlobalKey(debugLabel: 'qr_view');
+  QRViewController? _scannerController;
 
   @override
   void dispose() {
-    _scannerController.dispose();
+    _scannerController?.dispose();
     super.dispose();
   }
 
@@ -43,8 +40,8 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
     // Haptic UX: Vibrate when a QR is detected!
     HapticFeedback.vibrate();
 
-    // Performance UX: Pause the camera temporarily to avoid heavy load & duplicate scans
-    _scannerController.stop();
+    // Pause camera temporarily to avoid duplicate scans while API runs.
+    await _scannerController?.pauseCamera();
 
     try {
       if (!_shouldAllowQrAction()) {
@@ -112,12 +109,20 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
         ),
       );
 
-      // Because of an error, restart the camera so the user can retry scanning
-      _scannerController.start();
+      await _scannerController?.resumeCamera();
     } finally {
       // Release the lock (even if the camera is already stopped/started, this is best practice)
       _locked = false;
     }
+  }
+
+  void _onQrViewCreated(QRViewController controller) {
+    _scannerController = controller;
+    controller.scannedDataStream.listen((scanData) {
+      final value = scanData.code;
+      if (value == null || value.isEmpty) return;
+      _handleQr(value);
+    });
   }
 
   Future<void> _handleCheckOut() async {
@@ -331,58 +336,17 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
           ),
         ],
       ),
-      // Use a Stack so we can place Loading UI and overlay on top of the camera
       child: Stack(
         children: [
-          MobileScanner(
-            controller: _scannerController,
-            onDetect: (capture) {
-              if (capture.barcodes.isEmpty) return;
-              final value = capture.barcodes.first.rawValue;
-              if (value == null || value.isEmpty) return;
-              _handleQr(value);
-            },
-          ),
-
-          // Visual UX: Scanner guide box (overlay)
-          // Add a transparent shadow around the central box
-          ColorFiltered(
-            colorFilter: ColorFilter.mode(
-              Colors.black.withValues(alpha: 0.5),
-              BlendMode.srcOut,
-            ),
-            child: Stack(
-              children: [
-                Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.black,
-                    backgroundBlendMode: BlendMode.dstOut,
-                  ),
-                ),
-                Center(
-                  child: Container(
-                    width: 250,
-                    height: 250,
-                    decoration: BoxDecoration(
-                      color: Colors
-                          .red, // This color becomes the transparent hole area due to BlendMode.dstOut
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Border for the scanner box to make it more distinct
-          Center(
-            child: Container(
-              width: 250,
-              height: 250,
-              decoration: BoxDecoration(
-                border: Border.all(color: BaseColor.primaryinventory, width: 3),
-                borderRadius: BorderRadius.circular(16),
-              ),
+          QRView(
+            key: _qrKey,
+            onQRViewCreated: _onQrViewCreated,
+            overlay: QrScannerOverlayShape(
+              borderColor: BaseColor.primaryinventory,
+              borderRadius: 16,
+              borderLength: 30,
+              borderWidth: 8,
+              cutOutSize: 250,
             ),
           ),
 
@@ -400,8 +364,6 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
               ),
             ),
           ),
-
-          // Loading overlay when state is loading (waiting for Check-In/Out API)
           if (actionState.isLoading)
             Container(
               color: Colors.black54,
