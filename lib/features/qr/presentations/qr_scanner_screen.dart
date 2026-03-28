@@ -22,12 +22,6 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
   final GlobalKey _qrKey = GlobalKey(debugLabel: 'qr_view');
   QRViewController? _scannerController;
 
-  @override
-  void dispose() {
-    _scannerController?.dispose();
-    super.dispose();
-  }
-
   bool _shouldAllowQrAction() {
     final user = ref.read(loginControllerProvider).user;
     return user != null;
