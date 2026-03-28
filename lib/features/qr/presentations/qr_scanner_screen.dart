@@ -97,7 +97,7 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
                   context,
                 ).pop(); // Close camera screen (return to previous page)
               },
-              child: const Text('Tutup & Selesai'),
+              child: Text('Tutup & Selesai', style: BaseTypography.bodySmall),
             ),
           ],
         ),
@@ -208,14 +208,14 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
                   Expanded(
                     child: TextButton(
                       onPressed: () => Navigator.of(ctx).pop(false),
-                      child: const Text('Batal'),
+                      child: Text('Batal', style: BaseTypography.bodySmall),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  Gap.w8,
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () => Navigator.of(ctx).pop(true),
-                      child: const Text('Ya, Check-Out'),
+                      child: Text('Ya, Check-Out', style: BaseTypography.bodySmall),
                     ),
                   ),
                 ],
@@ -280,7 +280,7 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () => Navigator.of(ctx).pop(),
-                          child: const Text('Selesai'),
+                          child: Text('Selesai', style: BaseTypography.bodySmall),
                         ),
                       ),
                     ],

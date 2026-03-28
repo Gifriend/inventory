@@ -73,7 +73,9 @@ jobs:
 
           TARGET_PATH=build/app/outputs/flutter-apk/app-release.apk
           mkdir -p $(dirname "$TARGET_PATH")
-          cp -f "$APK_PATH" "$TARGET_PATH"
+          if [ "$APK_PATH" != "$TARGET_PATH" ]; then
+            cp -f "$APK_PATH" "$TARGET_PATH"
+          fi
 
           echo "APK_PATH=$TARGET_PATH" >> $GITHUB_ENV
 

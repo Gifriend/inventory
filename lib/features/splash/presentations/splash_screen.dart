@@ -72,7 +72,7 @@ class SplashScreen extends ConsumerWidget {
                           onPressed: () {
                             ref.invalidate(splashBootstrapProvider);
                           },
-                          child: const Text('Coba Lagi'),
+                          child: Text('Coba Lagi', style: BaseTypography.bodySmall),
                         ),
                       ],
                     ),

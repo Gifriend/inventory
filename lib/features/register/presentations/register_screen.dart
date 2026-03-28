@@ -149,7 +149,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     Gap.h4,
                     TextButton(
                       onPressed: () => context.go('/login'),
-                      child: const Text('Sudah punya akun? Login'),
+                      child: Text('Sudah punya akun? Login', style: BaseTypography.bodySmall),
                     ),
                   ],
                 ),

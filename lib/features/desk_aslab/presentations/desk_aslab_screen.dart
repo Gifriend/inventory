@@ -145,7 +145,7 @@ class _DeskQrTile extends StatelessWidget {
                 ],
               ),
               actions: [
-                TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Tutup')),
+                TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('Tutup', style: BaseTypography.bodySmall,)),
               ],
             ),
           );

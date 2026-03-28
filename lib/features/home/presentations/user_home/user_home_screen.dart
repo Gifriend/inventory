@@ -15,16 +15,16 @@ class UserHomeScreen extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Konfirmasi Logout'),
-        content: const Text('Apakah Anda yakin ingin keluar dari aplikasi?'),
+        title: Text('Konfirmasi Logout', style: BaseTypography.bodySmall),
+        content: Text('Apakah Anda yakin ingin keluar dari aplikasi?', style: BaseTypography.bodySmall),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Batal'),
+            child: Text('Batal', style: BaseTypography.bodySmall),
           ),
           ElevatedButton(
             onPressed: () => context.pushNamed(AppRoute.login),
-            child: const Text('Logout'),
+            child: Text('Logout', style: BaseTypography.bodySmall),
           ),
         ],
       ),

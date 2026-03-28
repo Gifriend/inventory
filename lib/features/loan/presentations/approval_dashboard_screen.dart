@@ -14,18 +14,19 @@ class ApprovalDashboardScreen extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Konfirmasi Approve'),
+        title: Text('Konfirmasi Approve', style: BaseTypography.bodySmall),
         content: Text(
           'Lanjutkan proses persetujuan untuk request #$loanId?',
+          style: BaseTypography.bodySmall,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Batal'),
+            child: Text('Batal', style: BaseTypography.bodySmall),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Lanjutkan'),
+            child: Text('Lanjutkan', style: BaseTypography.bodySmall),
           ),
         ],
       ),
@@ -189,7 +190,7 @@ class ApprovalDashboardScreen extends ConsumerWidget {
                                         final confirmed = await showDialog<bool>(
                                           context: context,
                                           builder: (context) => AlertDialog(
-                                            title: const Text('Konfirmasi Reject'),
+                                            title: Text('Konfirmasi Reject', style: BaseTypography.bodySmall),
                                             content: TextField(
                                               controller: notesController,
                                               decoration: InputDecoration(
@@ -203,12 +204,12 @@ class ApprovalDashboardScreen extends ConsumerWidget {
                                               TextButton(
                                                 onPressed: () =>
                                                     Navigator.pop(context, false),
-                                                child: const Text('Batal'),
+                                                child: Text('Batal', style: BaseTypography.bodySmall),
                                               ),
                                               ElevatedButton(
                                                 onPressed: () =>
                                                     Navigator.pop(context, true),
-                                                child: const Text('Tolak'),
+                                                child: Text('Tolak', style: BaseTypography.bodySmall),
                                               ),
                                             ],
                                           ),
@@ -262,7 +263,7 @@ class ApprovalDashboardScreen extends ConsumerWidget {
                       // no-op to satisfy unused variable lint
                     }
                   },
-                  child: const Text('Coba lagi'),
+                  child: Text('Coba lagi', style: BaseTypography.bodySmall),
                 ),
               ),
             ],

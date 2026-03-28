@@ -136,7 +136,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     Gap.h4,
                     TextButton(
                       onPressed: () => context.go('/register'),
-                      child: const Text('Belum punya akun? Daftar'),
+                      child: Text('Belum punya akun? Daftar', style: BaseTypography.bodySmall),
                     ),
                   ],
                 ),

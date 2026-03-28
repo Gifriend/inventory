@@ -34,15 +34,15 @@ class _LoanRequestScreenState extends ConsumerState<LoanRequestScreen> {
             context: context,
             barrierDismissible: false,
             builder: (ctx) => AlertDialog(
-              title: const Text('Permintaan Dikirim'),
+              title: Text('Permintaan Dikirim', style: BaseTypography.bodySmall),
               content:
-                  const Text('Permintaan peminjaman berhasil diajukan.'),
+                  Text('Permintaan peminjaman berhasil diajukan.', style: BaseTypography.bodySmall),
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.of(ctx).pop();
                   },
-                  child: const Text('Oke'),
+                  child: Text('Oke', style: BaseTypography.bodySmall),
                 ),
               ],
             ),

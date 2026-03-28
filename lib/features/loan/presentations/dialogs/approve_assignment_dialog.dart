@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:inventory/core/constants/constants.dart';
 import 'package:inventory/core/models/desk_model.dart';
 import 'package:inventory/core/models/room_model.dart';
 import 'package:inventory/core/utils/dio_error_mapper.dart';
@@ -33,7 +34,7 @@ class _ApproveAssignmentDialogState
         : const AsyncValue<List<DeskModel>>.data([]);
 
     return AlertDialog(
-      title: const Text('Assign Room & Desk'),
+      title: Text('Assign Room & Desk', style: BaseTypography.bodySmall),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -43,12 +44,12 @@ class _ApproveAssignmentDialogState
               data: (rooms) {
                 return DropdownButton<RoomModel>(
                   isExpanded: true,
-                  hint: const Text('Select Room'),
+                  hint: Text('Select Room', style: BaseTypography.bodySmall),
                   value: selectedRoom,
                   items: rooms.map((room) {
                     return DropdownMenuItem(
                       value: room,
-                      child: Text(room.name),
+                      child: Text(room.name, style: BaseTypography.bodySmall),
                     );
                   }).toList(),
                   onChanged: (room) {
@@ -69,7 +70,7 @@ class _ApproveAssignmentDialogState
               error: (error, _) =>
                   Text('Error loading rooms: ${mapDioErrorToMessage(error)}'),
             ),
-            const SizedBox(height: 16),
+            Gap.h16,
             // Desk Selection Dropdown
             if (selectedRoom != null)
               desksAsync.when(
@@ -79,12 +80,12 @@ class _ApproveAssignmentDialogState
                       .toList();
                   return DropdownButton<DeskModel>(
                     isExpanded: true,
-                    hint: const Text('Select Desk'),
+                    hint: Text('Select Desk', style: BaseTypography.bodySmall),
                     value: selectedDesk,
                     items: availableDesks.map((desk) {
                       return DropdownMenuItem(
                         value: desk,
-                        child: Text('Desk ${desk.deskNumber}'),
+                        child: Text('Desk ${desk.deskNumber}', style: BaseTypography.bodySmall),
                       );
                     }).toList(),
                     onChanged: (desk) {
@@ -96,7 +97,7 @@ class _ApproveAssignmentDialogState
                 },
                 loading: () => const CircularProgressIndicator(),
                 error: (error, _) =>
-                    Text('Error loading desks: ${mapDioErrorToMessage(error)}'),
+                    Text('Error loading desks: ${mapDioErrorToMessage(error)}', style: BaseTypography.bodySmall),
               ),
           ],
         ),
@@ -104,7 +105,7 @@ class _ApproveAssignmentDialogState
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text('Cancel', style: BaseTypography.bodySmall),
         ),
         ElevatedButton(
           onPressed: selectedRoom != null && selectedDesk != null
@@ -115,7 +116,7 @@ class _ApproveAssignmentDialogState
                   });
                 }
               : null,
-          child: const Text('Confirm'),
+          child: Text('Confirm', style: BaseTypography.bodySmall),
         ),
       ],
     );
