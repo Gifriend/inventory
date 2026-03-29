@@ -53,26 +53,30 @@ jobs:
 
       # Build single release APK for internal distribution
       - name: Build APK
-        run: flutter build apk --release --target-platform=android-arm64 --build-number=${{ github.run_number }}
+        run: flutter build apk --release --split-per-abi --build-number=${{ github.run_number }}
 
       # Verify APK output exists
       - name: Check APK output
         run: |
           echo "Listing APK path candidates..."
-          find build/app/outputs -type f -name "*release*.apk" -print
+          find build/app/outputs/flutter-apk -type f -name "*.apk" -print
 
       # Ensure at least one APK exists (fail early if not)
       - name: Assert APK found
         run: |
-          APK_COUNT=$(find build/app/outputs -type f -name "*release*.apk" | wc -l)
-          if [ "$APK_COUNT" -eq 0 ]; then
+          APK_FILES=$(find build/app/outputs/flutter-apk -type f -name "*.apk")
+
+          if [ -z "$APK_FILES" ]; then
             echo "No release APK found under build/app/outputs";
             exit 1;
           fi
-          echo "Found $APK_COUNT release APK file(s)."
 
-          APK_FILES=$(find build/app/outputs -type f -name "*release*.apk" | tr '\n' ' ')
-          echo "APK_FILES=$APK_FILES" >> $GITHUB_ENV
+          echo "Found APK files:"
+          echo "$APK_FILES"
+
+          echo "APK_FILES<<EOF" >> $GITHUB_ENV
+          echo "$APK_FILES" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       # Upload APK to GitHub Release
       - name: Create Release
@@ -81,6 +85,6 @@ jobs:
           tag_name: v1.0.${{ github.run_number }}
           name: Inspire Release v1.0.${{ github.run_number }}
           files: ${{ env.APK_FILES }}
+          fail_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
